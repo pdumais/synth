@@ -11405,6 +11405,7 @@ Source: AVX .. aphvc.pdf</description>
 </variantdefs>
 <classes>
 <class number="0" name="default" width="0" drill="0">
+<clearance class="0" value="0.205"/>
 </class>
 </classes>
 <parts>
@@ -11994,6 +11995,20 @@ Source: AVX .. aphvc.pdf</description>
 </nets>
 </sheet>
 </sheets>
+<errors>
+<approved hash="113,1,149.589,5.27558,OUTPUTS,,,,,"/>
+<approved hash="113,1,-22.6229,50.9956,PWR,,,,,"/>
+<approved hash="113,1,98.8229,40.4444,VCIN,,,,,"/>
+<approved hash="113,1,139.463,42.9844,FTDI,,,,,"/>
+<approved hash="113,1,55.88,8.45185,IC1,,,,,"/>
+<approved hash="113,1,156.21,38.3794,PWR1,,,,,"/>
+<approved hash="113,1,87.63,27.6183,STATUS,,,,,"/>
+<approved hash="113,1,138.887,-44.45,LFO1,,,,,"/>
+<approved hash="113,1,146.507,-44.45,LFO2,,,,,"/>
+<approved hash="113,1,154.127,-44.45,LFO3,,,,,"/>
+<approved hash="113,1,161.747,-44.45,LFO4,,,,,"/>
+<approved hash="113,1,115.649,-2.34442,FUTURE,,,,,"/>
+</errors>
 </schematic>
 </drawing>
 <compatibility>

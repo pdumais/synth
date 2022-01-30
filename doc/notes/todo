@@ -24,6 +24,7 @@ Phase 1
             - build my own but find a way to control resistors with voltage
                 - using digipots? need an attiny with ADC. That's a bit overkill
                 - using a completely different design based on OTAs ?
+    - ADSR and VCA
 
 ============================================================= Improvements ==========================================================
 - Improvements
