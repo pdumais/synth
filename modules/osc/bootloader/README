@@ -1,0 +1,8 @@
+Burning bootloader:
+    connect stk500 and chip each on their own power supply. Leave the VCC pin disconnected from the ISP header
+    
+    avrdude  -c stk500 -pm1284p -P /dev/ttyUSB9 -b115200 -B1 -U lfuse:w:0xF7:m -U hfuse:w:0xDE:m
+    avrdude  -c stk500 -pm1284p -P /dev/ttyUSB9 -b115200 -B1 -U flash:w:optiboot_atmega1284p.hex:i
+
+The, using FTDI:
+avrdude -vvv -pm1284p -P /dev/ttyUSB10 -carduino -b115200 -U flash:w:firmware.hex:i

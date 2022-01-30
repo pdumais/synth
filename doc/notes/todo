@@ -1,0 +1,42 @@
+============================================================= TODO stuff ==========================================================
+Phase 1
+    - test
+        use 33uf: resistance can vary from 79 to 3.1k. 33uf would let me range from 241 to 9646
+
+    - PCB board for wave shapper: 
+        power inputs: Gnd, +5, +12, -12
+            decoupling caps for lm7905: test other values
+        doit pouvoir remplacer les resistances par: pots, vactrol, ou le module attiny
+        add pins to be able to wire 4th opamp
+
+
+- Phase 2:
+    - atmega software:
+        need to remove noise from ADC:
+            with software, filter out any changes that happen faster than 20hz. So only use an average value taken over 50ms
+    - VCF
+        Remove DC component before passing into the filter. Then add it back after. That can be done with a unity gain opamp
+        ---> Use a ready built chip such as the one on electricdruid: I already ordered some
+            need to step down the voltage first. Using OPAMP? or just a voltage divider?
+            need bipolar signal?
+        ---> OR use vactrol? NSL-32 from digikey
+        few other options:
+            - build my own but find a way to control resistors with voltage
+                - using digipots? need an attiny with ADC. That's a bit overkill
+                - using a completely different design based on OTAs ?
+
+============================================================= Improvements ==========================================================
+- Improvements
+    - LFO: add a sawtooth opamp (with diodes) and allow to choose output with a switch. The gain will be kept at the end
+        but I need more variable resistors so knob wont work.
+
+============================================================= Shopping list ==========================================================
+- digikey
+    blue 22awg wire 100'
+    sockets for attiny and digipots
+
+- unused parts
+    2 two-channel 8bit DACs
+    2 8bit port extenders
+
+============================================================= Notes ==========================================================

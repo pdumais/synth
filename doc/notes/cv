@@ -1,0 +1,12 @@
+    - The only place where I need to use CV and decode it myself is in the wave shaper
+      There are several ways I can decode the CV:
+        - manually with a potentiometer with multiple gangs
+        - DIY vactrols: could work nicely and make an interesting vintage control. But finding a photoresistor of 10k is difficult
+        - make a digipots board: This solution might be cheaper than any other ones
+            - attiny80 with 10bit ADC: only one input
+                - hook up 4 dual channel digipots on SPI 
+            - the ADC is 10bit, but the digipots are 256 steps, so we dont need a better ADC
+        - Varactors with multiplier circuit
+        - LM13700 
+        - AD633?
+

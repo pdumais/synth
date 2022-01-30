@@ -1,0 +1,49 @@
+============================================================= Design considerations ===========================================
+    - use a unity gain amplifier in each circuits that consumes another one. This is to limit the current draw.
+    - If feeding audio signal through ADC, it needs to be offset above 0V
+
+============================================================= Future ==========================================================
+- PCB for attiny: VC-to-resistance (1 VC to 8 resistances)
+        FTDI header
+        make sure to get a 8bits digipot
+- Modules:
+    - ADSR:
+        attiny or esp32
+        4 ADC for knob inputs
+        1 digital input for trigger
+        8bit DAC for envelope output
+
+    - Comb filter / flanger /delay
+        create delay with ADC/DAC
+        SAMD51: 
+            3.3v, so need to convert output back to 5v
+            12bit dac. If 16bit is needed, use AD5686 or ADS1115
+    - Noise generator
+
+    - midi2CV (or buy one already made?) 
+
+    - Sequencer
+        esp8266 with LCD. Ned ADC and DAC
+        inputs
+            knob input that translates directly to output CV
+            button to start/stop sequence
+            button to start recording. Use same button to move to next step. Use "stop" to stop recording
+            knob for playback BPM
+            clock in? to be able to sync with other things?
+        outputs:
+            CV
+            trigger (pulse on every beat)
+        principle
+            16steps
+            record knob position in steps and then replay sequence out to CV
+            save/reload sequences? would need other buttons
+            if using esp8266, save/restore thru wifi too?
+        lcd: 
+            current record/playing step
+            BPM
+
+
+
+
+
+
