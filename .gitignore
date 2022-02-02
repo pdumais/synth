@@ -1,5 +1,8 @@
 *.i
 *.o
 *.s
+*.b#*
+*.s#*
 t
 firmware.hex
+

@@ -6613,6 +6613,8 @@ Source: AVX .. aphvc.pdf</description>
 <part name="C2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="025-024X044" package3d_urn="urn:adsk.eagle:package:23630/1" value="0.1uf"/>
 <part name="GND7" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
 <part name="R1" library="SparkFun-Resistors" deviceset="1KOHM" device="-HORIZ-1/4W-5%" value="10k"/>
+<part name="CV" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X2" device="" package3d_urn="urn:adsk.eagle:package:22435/2"/>
+<part name="GND8" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -6693,6 +6695,13 @@ Source: AVX .. aphvc.pdf</description>
 <instance part="R1" gate="G$1" x="68.58" y="88.9" smashed="yes" rot="R180">
 <attribute name="NAME" x="68.58" y="87.376" size="1.778" layer="95" font="vector" rot="R180" align="bottom-center"/>
 <attribute name="VALUE" x="68.58" y="90.424" size="1.778" layer="96" font="vector" rot="R180" align="top-center"/>
+</instance>
+<instance part="CV" gate="G$1" x="-27.94" y="33.02" smashed="yes" rot="R180">
+<attribute name="NAME" x="-21.59" y="27.305" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="-21.59" y="38.1" size="1.778" layer="96" rot="R180"/>
+</instance>
+<instance part="GND8" gate="1" x="-25.4" y="20.32" smashed="yes">
+<attribute name="VALUE" x="-25.4" y="17.526" size="1.778" layer="96" align="top-center"/>
 </instance>
 </instances>
 <busses>
@@ -6922,6 +6931,11 @@ Source: AVX .. aphvc.pdf</description>
 <pinref part="GND7" gate="1" pin="GND"/>
 <wire x1="45.72" y1="-12.7" x2="38.1" y2="-12.7" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<pinref part="CV" gate="G$1" pin="1"/>
+<pinref part="GND8" gate="1" pin="GND"/>
+<wire x1="-25.4" y1="30.48" x2="-25.4" y2="22.86" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="N$17" class="0">
 <segment>
@@ -7040,6 +7054,16 @@ Source: AVX .. aphvc.pdf</description>
 <wire x1="66.04" y1="-20.32" x2="66.04" y2="17.78" width="0.1524" layer="91"/>
 <pinref part="ATTINY44" gate="U1" pin="(ADC2)PA2"/>
 <wire x1="66.04" y1="17.78" x2="53.34" y2="17.78" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$26" class="0">
+<segment>
+<pinref part="ATTINY44" gate="U1" pin="(ADC7)PA7"/>
+<wire x1="53.34" y1="30.48" x2="53.34" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="53.34" y1="33.02" x2="-25.4" y2="33.02" width="0.1524" layer="91"/>
+<pinref part="CV" gate="G$1" pin="2"/>
+<wire x1="-25.4" y1="33.02" x2="-27.94" y2="33.02" width="0.1524" layer="91"/>
+<junction x="-25.4" y="33.02"/>
 </segment>
 </net>
 </nets>
