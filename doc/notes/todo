@@ -3,17 +3,51 @@ Phase 1
     - test
         use 33uf: resistance can vary from 79 to 3.1k. 33uf would let me range from 241 to 9646
 
-    - PCB board for wave shapper: 
-        power inputs: Gnd, +5, +12, -12
-            decoupling caps for lm7905: test other values
-        doit pouvoir remplacer les resistances par: pots, vactrol, ou le module attiny
-        add pins to be able to wire 4th opamp
-
 
 - Phase 2:
-    - atmega software:
-        need to remove noise from ADC:
-            with software, filter out any changes that happen faster than 20hz. So only use an average value taken over 50ms
+    - clock gen and sequencer
+        clock: attiny44(already have one) 
+            display: 
+                3 digits and 3 CD4056 (or 4511). Would need 7 pins total
+            rotary encoder: PEC11R-4220F-S0012-ND
+            pins
+                2 pins for encoder
+                7 digital out for display
+                1 PWM output
+                1 LED
+                save settings in eeprom?
+            2 Terminal for output
+
+            If I want 2 clocks: 
+                can use PA0 as PWM2 but this one needs to be software controlled since we only have 1 16bit timer
+                Need another pin for button to choose which clock to config:
+                    how to show which one is being configured?
+                    we are out of pins. So we could multiplex BCDCS1
+                        BCDCS1 set to input by default, and set to output only when we need to change value
+                        - if pressing button, we have a signal to change config. But this will also send a strobe to 
+                          BCD1. So always output value for BCD1 by default. 
+                        - There could be a conflict if turning the knob while pressing button because
+                          button will strobe BCD1 but we might be trying to update another BCD at that same time
+                        
+
+        sequencer
+            pending for design:
+                how does 4163 control the 4017? transistor or gates?
+                SPDT buttons for skipping steps: wire 3 and 5 to reset. This gives us 2,4,8 steps
+                reset button
+                pause button
+                terminals:  
+                    gate out: Terminal
+                    CV out: Terminal
+                    clock in. Terminal
+                    reset in/out for daisychain: Pins
+                    enable in/out for daisychain: Pins
+                    8 potentiometers requiring 2 pins each: Pins
+                        will need jumper wires on each pots
+                Gate: 
+            Breadboard it to test the current design
+            
+
     - VCF
         Remove DC component before passing into the filter. Then add it back after. That can be done with a unity gain opamp
         ---> Use a ready built chip such as the one on electricdruid: I already ordered some
@@ -24,17 +58,28 @@ Phase 1
             - build my own but find a way to control resistors with voltage
                 - using digipots? need an attiny with ADC. That's a bit overkill
                 - using a completely different design based on OTAs ?
-    - ADSR and VCA
+
 
 ============================================================= Improvements ==========================================================
 - Improvements
     - LFO: add a sawtooth opamp (with diodes) and allow to choose output with a switch. The gain will be kept at the end
         but I need more variable resistors so knob wont work.
+    - atmega software:
+        need to remove noise from ADC:
+            with software, filter out any changes that happen faster than 20hz. So only use an average value taken over 50ms
 
 ============================================================= Shopping list ==========================================================
 - digikey
+
+
+    
+    toggle buttons
+    push buttons
     blue 22awg wire 100'
     sockets for attiny and digipots
+    ribbon cable
+    and/nand?
+    bus bars
 
 - unused parts
     2 two-channel 8bit DACs
