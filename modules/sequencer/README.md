@@ -8,6 +8,32 @@ I'm not sure why having all pots connected together with a 100K resistor doesn't
 on and it was a problem. But by connecting everything the the inverting amplifier at the end, it solved that problem. 
 At the time of writing this, I don't understand why.
 
+What I didn't like about popular designs that I saw, was that they were all using diodes. The voltage drop of the diode would 
+affect the CV by a great margin IMO. With my design, I don't get any voltage drops so CV should be quite accurate. One problem
+is that my opamp is connected to +5, -5 and since it won't output a rail-to-rail signal, I do end up getting a clipped CV. Ideally,
+I would use +12,-12 and attenuate it down to 5
+
+## Keeping it simple
+As I was designing this module, I realized how many more features I could add to it but it would become increasingly difficult and
+more expensive to do so. I realized that I would be much better off to build it with a microcontroller instead. But I decided
+to keep using the 4017 because it was an interesting design. 
+These are the things I would've liked to do, but decided to hold off until I build a full digital sequencer. The following list 
+is more like personal notes so that I can remember later why I didn't implement those.
+- A pause button: This sounds simple because all I have to do is inhibit the clock on the 4017 and on the 4163. But both chips
+  expect a high and low signal respectively. So I would need a NOT gate for one of them. But then I also need to inhibit the clock
+  out of the gate and actually keep that signal high. Instead of using a NOT gate on one of the ic, I could simply cut the clock source.
+  but then I would need to tie both ic's clk pins to ground. If I leave it high, I risk creating a rising edge so the pause would 
+  force a move to the next step and then pause. So I need to ground the clock signal for the whole circuit, but raise the gate signal.
+  it's getting a bit complicated.
+- CV controlled gate width: The gate signal is just the clock signal being relayed. If I want to adjust to pulse width to control
+  the sustain length of an ADSR connected to the gate, I need to copy and modify the clock signal. 
+  This is the kind of thing that is much easier with a microcontroller because of all the required hardware that needs to be added
+  So I am just passing the clock with no modification. 
+- Randomizer:To be able to randomly shuffle steps. That's just not something you can do with the 4017.
+- variable step length: it would be possible to create the circuitry to manipulate the clock entering the 4017 and multiply/divide 
+  for every step. But that's a lot more components to add and becomes more expensive. This is something that is just easier with a 
+  microcontroller
+
 ## 4163 binary counter
 The 4163 (4 bit binary counter) is used to control the daisy chaining. QD will be low for the first 8 clocks and then high 
 for the next 8 clocks. This is used to control which of the 2 sequencers are active when daisy chained. there are 6 pins that 
@@ -26,20 +52,30 @@ When daisy-chaining, a cable needs to be connected between both sequencers so th
     - the enable line is connected between both sequencers so that pressing the start/stop button will act on both sequencers
 
 
-## Gate / trigger
-TODO
+## Gate
+The gate signal is simply the clock signal being relayed. My clock source has an adjustable pulse width. So to control the gate width
+per steps, this needs to be done on the clock.
 
 ## Inputs / Outputs
-## Inputs
+### Inputs
     - Clock 
     - enable (for daisy chain)
     - reset (for daisy chain)
     - pause/resume button
     - Buttons to shorten the sequence to 2 or 4 steps. 
     - Power: +12, -12, +5, Ground 
-## Outputs
+### Outputs
     - 8 pins for potentiometers wipers, 8 pins for their input voltage from the 4017, 1 pin for their ground
     - enable (for daisy chain)
     - reset (for daisy chain)
     - CV
     - Gate
+
+
+## How to use
+TODO:
+    connect clk barrel and pause button to the input header
+    connect a on-mom push button to the "reset button" header. Or use a jumper to leave out the reset function
+    If not daisy-chaining to a 2nd sequencer, set jumper on pin 1&2 of "split select"
+    If a daisy chain is needed, connect the "daisy chain" header to the "input" header of the 2nd sequencer
+    TODO: connection of counter selection

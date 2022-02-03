@@ -1,12 +1,8 @@
 ============================================================= TODO stuff ==========================================================
-Phase 1
-    - test
-        use 33uf: resistance can vary from 79 to 3.1k. 33uf would let me range from 241 to 9646
-
-
 - Phase 2:
     - clock gen and sequencer
-        clock: attiny44(already have one) 
+        clock: attiny44(already have one)
+            output should run 8 times faster, and each module will need to divide it. 
             display: 
                 3 digits and 3 CD4056 (or 4511). Would need 7 pins total
             rotary encoder: PEC11R-4220F-S0012-ND
@@ -14,46 +10,30 @@ Phase 1
                 2 pins for encoder
                 7 digital out for display
                 1 PWM output
-                1 LED
+                1 LED (divide frequency by 8)
                 save settings in eeprom?
-            2 Terminal for output
-
-            If I want 2 clocks: 
-                can use PA0 as PWM2 but this one needs to be software controlled since we only have 1 16bit timer
-                Need another pin for button to choose which clock to config:
-                    how to show which one is being configured?
-                    we are out of pins. So we could multiplex BCDCS1
-                        BCDCS1 set to input by default, and set to output only when we need to change value
-                        - if pressing button, we have a signal to change config. But this will also send a strobe to 
-                          BCD1. So always output value for BCD1 by default. 
-                        - There could be a conflict if turning the knob while pressing button because
-                          button will strobe BCD1 but we might be trying to update another BCD at that same time
+            1 Terminal for output
                         
 
         sequencer
             pending for design:
-                how does 4163 control the 4017? transistor or gates?
-                    convert signal from 4163 to a NOT using a transistor and 2 resistor
-                        we choose if we want the plain signal or the NOT signal
-                    the chosen signal needs a current gain. We will pass through either:
-                        - directly on drain with MPS2907. Can handle 60mA
-                        - NOT made with 2n3904: can handle up to 200mA
-                        - NOT made with IRF540N mosfet
+                change opamp to +12,-12? 
+                    - This eliminates the need for the LM7905
+                    - Eliminates 5V clipping because of the non-R2R output
+                    - signal needs to be attenuated by the last opamp, to keep it within 5V range
+                        -> NO! simulation shows that this is not an issue. Signal will stay at 5V
+                    - In that case, I can remove the 2nd transistor and replace it with opamp. Since the only purpose 
+                      was to have signal that would not come from the 4163 and be able to draw more current
+                add clock divider circuit
                 SPDT buttons for skipping steps: wire 3 and 5 to reset. This gives us 2,4,8 steps
-                reset button
-                    just reset the whole board. Push button to kill power
-                pause button
-                    do both pins need to be high or low?
-                    ENT pin of binary counter
-                    EN pin of 4017
-
+                Remove "pause" circuitry
                 terminals:  
                     gate out: Terminal
                     CV out: Terminal
                     8 potentiometers requiring 2 pins each: Pins
                         will need jumper wires on each pots
                 Gate: 
-                    how does that work ??
+                    relay clock through opamp
             Breadboard it to test the current design
             
 
@@ -79,15 +59,10 @@ Phase 1
 
 ============================================================= Shopping list ==========================================================
 - digikey
-
-
-    
     toggle buttons
-    push buttons
+    push buttons (push-to-break momentary) for reset. 
     blue 22awg wire 100'
-    sockets for attiny and digipots
     ribbon cable
-    and/nand?
     bus bars
 
 - unused parts
@@ -97,8 +72,3 @@ Phase 1
 ============================================================= Notes ==========================================================
 
 
-connect clk barrel and pause button to the input header
-connect a on-mom push button to the "reset button" header. Or use a jumper to leave out the reset function
-If not daisy-chaining to a 2nd sequencer, set jumper on pin 1&2 of "split select"
-If a daisy chain is needed, connect the "daisy chain" header to the "input" header of the 2nd sequencer
-TODO: connection of counter selection
