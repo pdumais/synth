@@ -9,9 +9,7 @@ on and it was a problem. But by connecting everything the the inverting amplifie
 At the time of writing this, I don't understand why.
 
 What I didn't like about popular designs that I saw, was that they were all using diodes. The voltage drop of the diode would 
-affect the CV by a great margin IMO. With my design, I don't get any voltage drops so CV should be quite accurate. One problem
-is that my opamp is connected to +5, -5 and since it won't output a rail-to-rail signal, I do end up getting a clipped CV. Ideally,
-I would use +12,-12 and attenuate it down to 5
+affect the CV by a great margin IMO. With my design, I don't get any voltage drops so CV should be quite accurate. 
 
 ## Keeping it simple
 As I was designing this module, I realized how many more features I could add to it but it would become increasingly difficult and
@@ -24,11 +22,11 @@ is more like personal notes so that I can remember later why I didn't implement 
   out of the gate and actually keep that signal high. Instead of using a NOT gate on one of the ic, I could simply cut the clock source.
   but then I would need to tie both ic's clk pins to ground. If I leave it high, I risk creating a rising edge so the pause would 
   force a move to the next step and then pause. So I need to ground the clock signal for the whole circuit, but raise the gate signal.
-  it's getting a bit complicated.
-- CV controlled gate width: The gate signal is just the clock signal being relayed. If I want to adjust to pulse width to control
-  the sustain length of an ADSR connected to the gate, I need to copy and modify the clock signal. 
-  This is the kind of thing that is much easier with a microcontroller because of all the required hardware that needs to be added
-  So I am just passing the clock with no modification. 
+  it's getting a bit complicated
+- The Gate output is just the clock. So it means that the gate will be on at a 50% duty cycle. When feeding into an ADSR, it would
+  be disreable to get a better control over the gate length. The way to do this, in my system, is to take the 1/8th output of the 
+  [Clock](/modules/clock) and feed it through the [Clock Divider](modules/divider) to adjust the width. Then the Gate can be taken from there
+  instead of the sequencer.
 - Randomizer:To be able to randomly shuffle steps. That's just not something you can do with the 4017.
 - variable step length: it would be possible to create the circuitry to manipulate the clock entering the 4017 and multiply/divide 
   for every step. But that's a lot more components to add and becomes more expensive. This is something that is just easier with a 
@@ -53,21 +51,16 @@ When daisy-chaining, a cable needs to be connected between both sequencers so th
 
 
 ## Gate
-The gate signal is simply the clock signal being relayed. My clock source has an adjustable pulse width. So to control the gate width
-per steps, this needs to be done on the clock.
+The gate signal is simply the clock signal being relayed. So a 50% on time.
 
 ## Inputs / Outputs
 ### Inputs
-    - Clock 
-    - enable (for daisy chain)
-    - reset (for daisy chain)
-    - pause/resume button
+    - Clock in
     - Buttons to shorten the sequence to 2 or 4 steps. 
     - Power: +12, -12, +5, Ground 
-### Outputs
     - 8 pins for potentiometers wipers, 8 pins for their input voltage from the 4017, 1 pin for their ground
-    - enable (for daisy chain)
-    - reset (for daisy chain)
+### Outputs
+    - daisy-chain connector
     - CV
     - Gate
 
