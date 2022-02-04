@@ -12,6 +12,7 @@
 - [LFO shaper: to convert square to trianble/sine or anything in between](modules/waveshaper)
 - [Sequencer](modules/sequencer)
 - [Clock](modules/clock)
+- [Clock Divider](modules/divider)
 
 # Known issues
 - Power filtering
