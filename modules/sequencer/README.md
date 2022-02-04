@@ -1,4 +1,4 @@
-#Design
+# Design
 This is a 8 step sequencer based on the 4017 counter. It is designed to make it possible to daisy-chain 2 of those to get a 16 step sequencer
 
 The 4017's Q1 to Q8 outputs go through 8 optentiometers which are all connected to unity gain opamp. The opamp is used to limit the current draw from the system after going out on the CV output
