@@ -1,38 +1,46 @@
 ============================================================= TODO stuff ==========================================================
 - Phase 2:
-    - clock gen and sequencer
-        clock: attiny44(already have one)
-            output should run 8 times faster, and each module will need to divide it. 
+    - Waiting for OSC and waveshaper PCBs
+        - build and test boards
+        - circuit snapshot image and board pictures
+
+    - Sequencer
+        - Design
+            - Remove the 2nd transistor and replace it with opamp. Since the only purpose 
+              was to have signal that would not come from the 4163 and be able to draw more current
+            - SPDT buttons for skipping steps: wire 3 and 5 to reset. This gives us 2,4,8 steps
+            - terminals:  
+                Gate out, thru clock. Disable during reset
+                CV out: Terminal
+                8 potentiometers requiring 2 pins each: Pins
+                    will need jumper wires on each pots
+        - Test on breadboard
+        - Send PCB to fab
+        - build and test boards
+        - circuit snapshot image and board pictures
+
+    - clock gen
+        - Design
+            clock: attiny44(already have one)
+            2 outputs: at clock speed, The other 8 times faster
             display: 
                 3 digits and 3 CD4056 (or 4511). Would need 7 pins total
             rotary encoder: PEC11R-4220F-S0012-ND
-            pins
+            ic pins
                 2 pins for encoder
                 7 digital out for display
-                1 PWM output
-                1 LED (divide frequency by 8)
-                save settings in eeprom?
-            1 Terminal for output
-                        
+                2 PWM output
+                1 LED 
+            save settings in eeprom?
+            2 Terminal for output
+        - Test on breadboard
+        - Send PCB to fab
+        - build and test boards
+        - circuit snapshot image and board pictures
 
-        sequencer
-            pending for design:
-                change opamp to +12,-12? 
-                    - OK This eliminates the need for the LM7905
-                    - OK Eliminates 5V clipping because of the non-R2R output
-                    - OKsignal needs to be attenuated by the last opamp, to keep it within 5V range
-                       OK  -> NO! simulation shows that this is not an issue. Signal will stay at 5V
-                    - In that case, I can remove the 2nd transistor and replace it with opamp. Since the only purpose 
-                      was to have signal that would not come from the 4163 and be able to draw more current
-                SPDT buttons for skipping steps: wire 3 and 5 to reset. This gives us 2,4,8 steps
-                terminals:  
-                    Gate out, thru clock. Disable during reset
-                    CV out: Terminal
-                    8 potentiometers requiring 2 pins each: Pins
-                        will need jumper wires on each pots
-            Breadboard it to test the current design
-            
-
+       
+     
+- Phase 3
     - VCF
         Remove DC component before passing into the filter. Then add it back after. That can be done with a unity gain opamp
         ---> Use a ready built chip such as the one on electricdruid: I already ordered some
@@ -49,7 +57,7 @@
 - Improvements
     - LFO: add a sawtooth opamp (with diodes) and allow to choose output with a switch. The gain will be kept at the end
         but I need more variable resistors so knob wont work.
-    - atmega software:
+    - atmega software for osc:
         need to remove noise from ADC:
             with software, filter out any changes that happen faster than 20hz. So only use an average value taken over 50ms
 
