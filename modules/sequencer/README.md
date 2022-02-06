@@ -23,10 +23,6 @@ is more like personal notes so that I can remember later why I didn't implement 
   but then I would need to tie both ic's clk pins to ground. If I leave it high, I risk creating a rising edge so the pause would 
   force a move to the next step and then pause. So I need to ground the clock signal for the whole circuit, but raise the gate signal.
   it's getting a bit complicated
-- The Gate output is just the clock. So it means that the gate will be on at a 50% duty cycle. When feeding into an ADSR, it would
-  be disreable to get a better control over the gate length. The way to do this, in my system, is to take the 1/8th output of the 
-  [Clock](/modules/clock) and feed it through the [Clock Divider](modules/divider) to adjust the width. Then the Gate can be taken from there
-  instead of the sequencer.
 - Randomizer:To be able to randomly shuffle steps. That's just not something you can do with the 4017.
 - variable step length: it would be possible to create the circuitry to manipulate the clock entering the 4017 and multiply/divide 
   for every step. But that's a lot more components to add and becomes more expensive. This is something that is just easier with a 
@@ -51,7 +47,8 @@ When daisy-chaining, a cable needs to be connected between both sequencers so th
 
 
 ## Gate
-The gate signal is simply the clock signal being relayed. So a 50% on time.
+The gate signal is fed to a monostable multivibrator that generates a gate signal at the same frequency than the input clock. The pulse width cn be adjusted
+beteen 160ms to 1.8s through a 10k potentionmeter
 
 ## Inputs / Outputs
 ### Inputs
