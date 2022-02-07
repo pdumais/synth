@@ -5,7 +5,6 @@
         - build and test boards
         - circuit snapshot image and board pictures
 
-
     - clock gen
         - Design
             - attiny code
@@ -25,6 +24,8 @@
 
 
 - Phase 3
+    - Noise generator: Avalanche noise gen with a transistor and resistor
+        current design has a hum, and it also needs to clip the signal to -5,+5
     - VCF
         Remove DC component before passing into the filter. Then add it back after. That can be done with a unity gain opamp
         ---> Use a ready built chip such as the one on electricdruid: I already ordered some
@@ -36,7 +37,6 @@
                 - using digipots? need an attiny with ADC. That's a bit overkill
                 - using a completely different design based on OTAs ?
 
-    - Noise generator: Avalanche noise gen with a transistor and resistor
 
 ============================================================= Improvements ==========================================================
 - Improvements
