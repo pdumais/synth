@@ -5,22 +5,16 @@
         - build and test boards
         - circuit snapshot image and board pictures
 
-    - clock gen
-        - Design
-            - attiny code
-                toggle pin with software instead of PWM
-                    Max freq would be 4hz(240bpm), so 32hz for the x8
-                save settings in eeprom?
-        - Test on breadboard
-        - Send PCB to fab
-        - build and test boards
-        - circuit snapshot image and board pictures
-
     - Sequencer
         - Test on breadboard
         - Send PCB to fab
         - build and test boards
         - circuit snapshot image and board pictures
+
+    - clock gen
+        - build and test boards
+        - circuit snapshot image and board pictures
+
 
 
 - Phase 3
