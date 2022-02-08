@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
@@ -4324,6 +4324,8 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 <part name="R22" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="R-US_" device="0207/12" package3d_urn="urn:adsk.eagle:package:6240598/1" value="150"/>
 <part name="R23" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="R-US_" device="0207/12" package3d_urn="urn:adsk.eagle:package:6240598/1" value="150"/>
 <part name="R24" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="R-US_" device="0207/12" package3d_urn="urn:adsk.eagle:package:6240598/1" value="150"/>
+<part name="C3" library="SparkFun-Capacitors" library_urn="urn:adsk.eagle:library:510" deviceset="0.1UF" device="-KIT-EZ-50V-20%" package3d_urn="urn:adsk.eagle:package:37428/1" value="0.1uF"/>
+<part name="SUPPLY4" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="5V" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -4346,9 +4348,9 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 <attribute name="VALUE" x="67.31" y="-36.83" size="1.778" layer="96"/>
 </instance>
 <instance part="GND2" gate="1" x="60.96" y="-21.59" smashed="yes"/>
-<instance part="GND3" gate="1" x="63.5" y="43.18" smashed="yes"/>
-<instance part="SUPPLY2" gate="G$1" x="58.42" y="77.47" smashed="yes" rot="R90">
-<attribute name="VALUE" x="55.626" y="77.47" size="1.778" layer="96" rot="R90" align="bottom-center"/>
+<instance part="GND3" gate="1" x="57.15" y="40.64" smashed="yes"/>
+<instance part="SUPPLY2" gate="G$1" x="48.26" y="77.47" smashed="yes" rot="R90">
+<attribute name="VALUE" x="45.466" y="77.47" size="1.778" layer="96" rot="R90" align="bottom-center"/>
 </instance>
 <instance part="C2" gate="G$1" x="128.27" y="77.47" smashed="yes" rot="R90">
 <attribute name="VALUE" x="130.429" y="78.994" size="1.778" layer="96" font="vector" rot="R90"/>
@@ -4446,6 +4448,12 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 <instance part="R24" gate="G$1" x="209.55" y="-74.93" smashed="yes" rot="R180">
 <attribute name="VALUE" x="213.36" y="-71.628" size="1.778" layer="96" rot="R180"/>
 </instance>
+<instance part="C3" gate="G$1" x="57.15" y="64.77" smashed="yes" rot="R180">
+<attribute name="VALUE" x="55.626" y="66.929" size="1.778" layer="96" font="vector" rot="R180"/>
+</instance>
+<instance part="SUPPLY4" gate="G$1" x="132.08" y="-55.88" smashed="yes" rot="R90">
+<attribute name="VALUE" x="129.286" y="-55.88" size="1.778" layer="96" rot="R90" align="bottom-center"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -4518,12 +4526,16 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 <segment>
 <pinref part="SUPPLY2" gate="G$1" pin="5V"/>
 <pinref part="ATTINY44" gate="G$1" pin="VCC"/>
-<wire x1="58.42" y1="77.47" x2="60.96" y2="77.47" width="0.1524" layer="91"/>
+<wire x1="48.26" y1="77.47" x2="60.96" y2="77.47" width="0.1524" layer="91"/>
 <pinref part="R1" gate="G$1" pin="2"/>
 <wire x1="60.96" y1="77.47" x2="64.77" y2="77.47" width="0.1524" layer="91"/>
 <wire x1="119.38" y1="91.44" x2="60.96" y2="91.44" width="0.1524" layer="91"/>
 <wire x1="60.96" y1="91.44" x2="60.96" y2="77.47" width="0.1524" layer="91"/>
 <junction x="60.96" y="77.47"/>
+<pinref part="C3" gate="G$1" pin="2"/>
+<wire x1="48.26" y1="77.47" x2="57.15" y2="77.47" width="0.1524" layer="91"/>
+<wire x1="57.15" y1="77.47" x2="57.15" y2="67.31" width="0.1524" layer="91"/>
+<junction x="48.26" y="77.47"/>
 </segment>
 <segment>
 <pinref part="IC2" gate="P" pin="VCC"/>
@@ -4534,6 +4546,20 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 <junction x="102.87" y="0"/>
 <wire x1="102.87" y1="0" x2="95.25" y2="0" width="0.1524" layer="91"/>
 <pinref part="SUPPLY3" gate="G$1" pin="5V"/>
+</segment>
+<segment>
+<pinref part="IC1" gate="A" pin="DFI"/>
+<wire x1="163.83" y1="-55.88" x2="135.89" y2="-55.88" width="0.1524" layer="91"/>
+<pinref part="SUPPLY4" gate="G$1" pin="5V"/>
+<pinref part="IC2" gate="A" pin="DFI"/>
+<wire x1="135.89" y1="-55.88" x2="132.08" y2="-55.88" width="0.1524" layer="91"/>
+<wire x1="163.83" y1="38.1" x2="135.89" y2="38.1" width="0.1524" layer="91"/>
+<pinref part="IC3" gate="A" pin="DFI"/>
+<wire x1="135.89" y1="38.1" x2="135.89" y2="-7.62" width="0.1524" layer="91"/>
+<wire x1="135.89" y1="-7.62" x2="163.83" y2="-7.62" width="0.1524" layer="91"/>
+<wire x1="135.89" y1="-7.62" x2="135.89" y2="-55.88" width="0.1524" layer="91"/>
+<junction x="135.89" y="-7.62"/>
+<junction x="135.89" y="-55.88"/>
 </segment>
 </net>
 <net name="GND" class="0">
@@ -4547,12 +4573,6 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 <pinref part="FTDI" gate="A" pin="1"/>
 <pinref part="GND2" gate="1" pin="GND"/>
 <wire x1="71.12" y1="-19.05" x2="60.96" y2="-19.05" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="GND3" gate="1" pin="GND"/>
-<wire x1="63.5" y1="45.72" x2="63.5" y2="46.99" width="0.1524" layer="91"/>
-<pinref part="ATTINY44" gate="G$1" pin="GND"/>
-<wire x1="63.5" y1="46.99" x2="64.77" y2="46.99" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="IC1" gate="P" pin="GND"/>
@@ -4593,6 +4613,15 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 <wire x1="232.41" y1="-12.7" x2="241.3" y2="-12.7" width="0.1524" layer="91"/>
 <wire x1="241.3" y1="-12.7" x2="241.3" y2="-15.24" width="0.1524" layer="91"/>
 <pinref part="GND4" gate="1" pin="GND"/>
+</segment>
+<segment>
+<pinref part="ATTINY44" gate="G$1" pin="GND"/>
+<pinref part="GND3" gate="1" pin="GND"/>
+<wire x1="64.77" y1="46.99" x2="57.15" y2="46.99" width="0.1524" layer="91"/>
+<pinref part="C3" gate="G$1" pin="1"/>
+<wire x1="57.15" y1="46.99" x2="57.15" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="57.15" y1="46.99" x2="57.15" y2="59.69" width="0.1524" layer="91"/>
+<junction x="57.15" y="46.99"/>
 </segment>
 </net>
 <net name="RESET" class="0">
@@ -4713,8 +4742,8 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 <net name="STROBE3" class="0">
 <segment>
 <pinref part="IC1" gate="A" pin="ST"/>
-<wire x1="163.83" y1="-58.42" x2="152.4" y2="-58.42" width="0.1524" layer="91"/>
-<label x="152.4" y="-58.42" size="1.778" layer="95" rot="R180" xref="yes"/>
+<wire x1="163.83" y1="-58.42" x2="158.75" y2="-58.42" width="0.1524" layer="91"/>
+<label x="158.75" y="-58.42" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <pinref part="ATTINY44" gate="G$1" pin="(PCINT0/AREF/ADC0)PA0"/>
@@ -5059,11 +5088,6 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 </nets>
 </sheet>
 </sheets>
-<errors>
-<approved hash="202,1,163.83,-55.88,IC1,DFI,,,,"/>
-<approved hash="202,1,163.83,38.1,IC2,DFI,,,,"/>
-<approved hash="202,1,163.83,-7.62,IC3,DFI,,,,"/>
-</errors>
 </schematic>
 </drawing>
 <compatibility>
