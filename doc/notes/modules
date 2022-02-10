@@ -29,6 +29,7 @@
         1 digital input for trigger
 
     - Delay / flanger
+        Test the V3207 delay
         create delay with ADC/DAC
             - A delay with configurable size between 1ms to 20ms. CV controlled
                 - when CV is from an LFO, we effectively get a flanger
@@ -39,6 +40,7 @@
         - test with V3208D?
 
     - sample and repeat (experimental)
+        - also called stutter / cd skipping
         - capture a sample from input, of size configurable by CV.
         - repeat playback a number of time, configurable by CV.
         - then move on to the next sample capture

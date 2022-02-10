@@ -4,14 +4,15 @@
         - test clearance and airwire errors on both desings
         - build and test boards
         - circuit snapshot image and board pictures
-
-    - Sequencer
-        - Test on breadboard
-        - Send PCB to fab
+    - clock gen
         - build and test boards
         - circuit snapshot image and board pictures
 
-    - clock gen
+
+    - Sequencer
+        - Test on breadboard
+            make sure knobs are left to right when looking at digit
+        - Send PCB to fab
         - build and test boards
         - circuit snapshot image and board pictures
 
@@ -34,6 +35,7 @@
 
 ============================================================= Improvements ==========================================================
 - Improvements
+    - How to add more voices to oscillator? with chorus? use more oscillators?
     - LFO: add a sawtooth opamp (with diodes) and allow to choose output with a switch. The gain will be kept at the end
         but I need more variable resistors so knob wont work.
     - atmega software for osc:
@@ -43,10 +45,11 @@
 ============================================================= Shopping list ==========================================================
 - digikey
     toggle buttons
-    push buttons (push-to-break momentary) for reset. 
     blue 22awg wire 100'
     ribbon cable
     bus bars
+    lm386
+    transistors
 
 - unused parts
     2 two-channel 8bit DACs

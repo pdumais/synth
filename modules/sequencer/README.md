@@ -1,5 +1,5 @@
 # Design
-This is a 8 step sequencer based on the 4017 counter. It is designed to make it possible to daisy-chain 2 of those to get a 16 step sequencer
+This is a 8 step sequencer based on the 4017 counter. 
 
 The 4017's Q1 to Q8 outputs go through 8 optentiometers which are all connected to unity gain opamp. The opamp is used to limit the current draw from the system after going out on the CV output
 
@@ -28,8 +28,11 @@ is more like personal notes so that I can remember later why I didn't implement 
   for every step. But that's a lot more components to add and becomes more expensive. This is something that is just easier with a 
   microcontroller
 
-## 4163 binary counter
-The 4163 (4 bit binary counter) is used to control the daisy chaining. QD will be low for the first 8 clocks and then high 
+## 74163 binary counter
+NOTE: This is no longer in the design. Because the 74163 starts with all outputs high and goes to 0 after the first clock
+      That's out of sync with the 4017. So I removed that. It could've worked with the 74161 maybe.
+
+The 74163 (4 bit binary counter) is used to control the daisy chaining. QD will be low for the first 8 clocks and then high 
 for the next 8 clocks. This is used to control which of the 2 sequencers are active when daisy chained. there are 6 pins that 
 require a jumper to control the daisy-chain operation 
     - A jumper between pin 1&2 will make the 4017 active  (by controlling the vcc line) when 4163.QD is high, 
@@ -57,15 +60,7 @@ beteen 160ms to 1.8s through a 10k potentionmeter
     - Power: +12, -12, +5, Ground 
     - 8 pins for potentiometers wipers, 8 pins for their input voltage from the 4017, 1 pin for their ground
 ### Outputs
-    - daisy-chain connector
     - CV
     - Gate
 
 
-## How to use
-TODO:
-    connect clk barrel and pause button to the input header
-    connect a on-mom push button to the "reset button" header. Or use a jumper to leave out the reset function
-    If not daisy-chaining to a 2nd sequencer, set jumper on pin 1&2 of "split select"
-    If a daisy chain is needed, connect the "daisy chain" header to the "input" header of the 2nd sequencer
-    TODO: connection of counter selection

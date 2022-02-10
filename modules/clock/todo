@@ -1,0 +1,4 @@
+software bugs
+    when changing BPM with knob, timer stalls sometimes
+    when restarting, the 4056 remembers the old display values. And setting 120 again doesn't
+        solve the issue because it seems the chips were not ready
