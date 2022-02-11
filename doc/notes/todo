@@ -1,22 +1,39 @@
 ============================================================= TODO stuff ==========================================================
 - Phase 2:
-    - Waiting for OSC and waveshaper PCBs
-        - test clearance and airwire errors on both desings
-        - build and test boards
-        - circuit snapshot image and board pictures
-    - clock gen
-        - build and test boards
-        - circuit snapshot image and board pictures
+    - on hold / blocked
+        - Waiting for PCB
+            - OSC and waveshaper PCBs
+                - test clearance and airwire errors on both desings
+                - build and test boards
+                - circuit snapshot image and board pictures
+            - clock gen
+                - build and test boards
+                - circuit snapshot image and board pictures
 
+        - waiting for parts from digikey
+            - Sequencer
+                - Test on breadboard
+                    test 74161 and BCD counter
+                    make sure knobs are left to right when looking at digit
+                - Send PCB to fab
+                - build and test boards
+                - circuit snapshot image and board pictures
+        - waiting for parts from aliexpress
+            - ADSR
+                - design
+                    4 knob inputs
+                    1 DAC output
+                    1 gate input
+                    gate to trigger converter (in software)
+            
 
-    - Sequencer
-        - Test on breadboard
-            make sure knobs are left to right when looking at digit
-        - Send PCB to fab
-        - build and test boards
-        - circuit snapshot image and board pictures
-
-
+    - VCA
+        - design
+            1 input. remove DC offset
+            1 output. need buffer?
+            1 knob/CV input
+                convert voltage down from 5v to 3.3
+                0 needs to be attenuated, and 3.3=unity
 
 - Phase 3
     - Noise generator: Avalanche noise gen with a transistor and resistor
@@ -44,9 +61,8 @@
 
 ============================================================= Shopping list ==========================================================
 - digikey
-    toggle buttons
-    blue 22awg wire 100'
-    ribbon cable
+    toggle buttons (ordered, aliexpress)
+
     bus bars
     lm386
     transistors
