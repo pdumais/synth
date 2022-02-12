@@ -13,6 +13,11 @@
 - [Sequencer](modules/sequencer)
 - [Clock](modules/clock)
 - [Clock Divider](modules/divider)
+- [Voltage Controlled Resistors](modules/digipot)
+- [Midi2CV](modules/midi2cv)
+- [Noise Generator](modules/noise)
+- [4 Channel VCA](modules/vca)
+- [4 stage VCF](modules/vcf)
 
 # Known issues
 - Power filtering

@@ -21,7 +21,7 @@
         - Need to order stuff from digikey 
             - VCA
                 - breadboard test
-                    - Need to remove DC offset from input signal?
+                    - Need to convert to bipolar before entering? and before exiting?
                 - send to Fab
                 - build and test boards
                 - circuit snapshot image and board pictures
