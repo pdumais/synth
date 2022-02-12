@@ -313,6 +313,7 @@ UsedLibrary="/home/pat/EAGLE/extralibs/SparkFun-Eagle-Libraries/SparkFun-RF.lbr"
 UsedLibrary="/home/pat/EAGLE/extralibs/SparkFun-Eagle-Libraries/SparkFun-Sensors.lbr"
 UsedLibrary="/home/pat/EAGLE/extralibs/SparkFun-Eagle-Libraries/SparkFun-Switches.lbr"
 UsedLibrary="/home/pat/EAGLE/extralibs/Adafruit-Eagle-Library/adafruit.lbr"
+UsedLibrary="/home/pat/EAGLE/extralibs/ic-coolaudio.lbr"
 
 [Win_1]
 Type="Control Panel"

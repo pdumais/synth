@@ -1524,7 +1524,6 @@ Operational amplifiers,  comparators, voltage regulators, ADCs, DACs, etc.&lt;p&
 <part name="P-2" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="-12V" device=""/>
 <part name="P+7" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+12V" device=""/>
 <part name="R25" library="SparkFun-Resistors" deviceset="RESISTOR" device="AXIAL-0.3" value="7.5k"/>
-<part name="P+8" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+5V" device=""/>
 <part name="GND10" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="P+9" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+12V" device=""/>
 <part name="P-3" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="-12V" device=""/>
@@ -1556,6 +1555,7 @@ Operational amplifiers,  comparators, voltage regulators, ADCs, DACs, etc.&lt;p&
 <part name="GND20" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND21" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND22" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
+<part name="P+8" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+12V" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -1748,9 +1748,6 @@ if CV==5 &amp;&amp; POT==5: out=-169mV (0 gain)
 <instance part="R25" gate="G$1" x="172.72" y="162.56" smashed="yes">
 <attribute name="VALUE" x="172.72" y="161.036" size="1.778" layer="96" font="vector" align="top-center"/>
 </instance>
-<instance part="P+8" gate="1" x="160.02" y="162.56" smashed="yes" rot="R90">
-<attribute name="VALUE" x="157.48" y="162.56" size="1.778" layer="96" rot="R180"/>
-</instance>
 <instance part="AS2164" gate="*" x="172.72" y="127" smashed="yes" rot="R90">
 <attribute name="NAME" x="170.18" y="127" size="1.778" layer="94" rot="R270" align="bottom-center"/>
 </instance>
@@ -1825,6 +1822,9 @@ if CV==5 &amp;&amp; POT==5: out=-169mV (0 gain)
 <instance part="GND20" gate="1" x="-99.06" y="160.02" smashed="yes"/>
 <instance part="GND21" gate="1" x="-99.06" y="142.24" smashed="yes"/>
 <instance part="GND22" gate="1" x="-99.06" y="124.46" smashed="yes"/>
+<instance part="P+8" gate="1" x="160.02" y="162.56" smashed="yes" rot="R90">
+<attribute name="VALUE" x="157.48" y="162.56" size="1.778" layer="96" rot="R180"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -1855,11 +1855,6 @@ if CV==5 &amp;&amp; POT==5: out=-169mV (0 gain)
 <pinref part="R22" gate="G$1" pin="2"/>
 <wire x1="-22.86" y1="114.3" x2="-20.32" y2="114.3" width="0.1524" layer="91"/>
 </segment>
-<segment>
-<pinref part="P+8" gate="1" pin="+5V"/>
-<pinref part="R25" gate="G$1" pin="1"/>
-<wire x1="162.56" y1="162.56" x2="167.64" y2="162.56" width="0.1524" layer="91"/>
-</segment>
 </net>
 <net name="+12V" class="0">
 <segment>
@@ -1884,6 +1879,11 @@ if CV==5 &amp;&amp; POT==5: out=-169mV (0 gain)
 <pinref part="P+10" gate="1" pin="+12V"/>
 <pinref part="IC1" gate="P" pin="V+"/>
 <wire x1="160.02" y1="139.7" x2="165.1" y2="139.7" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="R25" gate="G$1" pin="1"/>
+<wire x1="162.56" y1="162.56" x2="167.64" y2="162.56" width="0.1524" layer="91"/>
+<pinref part="P+8" gate="1" pin="+12V"/>
 </segment>
 </net>
 <net name="-12V" class="0">
