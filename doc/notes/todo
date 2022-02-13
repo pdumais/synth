@@ -22,27 +22,37 @@
             - VCA
                 - breadboard test
                     - Need to convert to bipolar before entering? and before exiting?
+                    - test knob, and test CV with LFO
                 - send to Fab
                 - build and test boards
                 - circuit snapshot image and board pictures
-        - need esp32 from aliexpress
-            - ADSR
-                - design
-                    4 knob inputs
-                1 PWM output for envelope
-                1 gate input
-                gate to trigger converter (in software)
-
 
     - midi2CV
-        generate CV
-        clock out
-        read DIN5 MIDI messages
-        Design arduino shield
-            Just use the terminal shield
+        - hardware design
+            coupling caps everywhere
+        - software
+            receive midi from din5
+            send pitch to DACs
+            send CC to DACs
+            send gates to digital pins
+            send levels to DACs
+            send clock to digital pin
+            receive sysex messages and configure. 
+            Save/load config from eeprom
+        - breadboard test
+        - send to Fab
+        - build and test boards
+        - circuit snapshot image and board pictures
             
 
 - Phase 3
+    - ADSR
+        - ESP32? Or pro-mini with 12bit dac?
+        - design
+            4 knob inputs
+            1 PWM output for envelope
+            1 gate input
+            gate to trigger converter (in software)
     - Noise generator: Avalanche noise gen with a transistor and resistor
         current design has a hum, and it also needs to clip the signal to -5,+5
     - VCF
@@ -67,7 +77,6 @@
     transistors
 
 - unused parts
-    2 two-channel 8bit DACs
     2 8bit port extenders
 
 ============================================================= Notes ==========================================================

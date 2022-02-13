@@ -1,13 +1,15 @@
 
-output with PWM and LPF
-3 PWM:
-    channel 0 notes
-    channel 1 notes
-    channel 2 notes
-    channel 0 CC 0
-    channel 0 CC 1
-    channel 0 CC 2
+hardware design
+    coupling caps everywhere
 
+software
+    receive midi from din5
+    send pitch to DACs
+    send CC to DACs
+    send gates to digital pins
+    send levels to DACs
+    send clock to digital pin
 
-din5 input for midi keyboard
-
+    receive sysex messages and configure. 
+    Save/load config from eeprom
+    
