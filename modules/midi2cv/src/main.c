@@ -1,45 +1,16 @@
-/*
-             LUFA Library
-     Copyright (C) Dean Camera, 2021.
+#include <avr/io.h>
+#include <avr/power.h>
+#include <avr/interrupt.h>
+#include "Descriptors.h"
+#include <LUFA/Drivers/USB/USB.h>
+#include <LUFA/Platform/Platform.h>
 
-  dean [at] fourwalledcubicle [dot] com
-           www.lufa-lib.org
-*/
+struct {
+    uint8_t cv_channel[3];
+} config;
 
-/*
-  Copyright 2021  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+uint8_t cv_note[3] = {0xFF, 0xFF, 0xFF};
 
-  Permission to use, copy, modify, distribute, and sell this
-  software and its documentation for any purpose is hereby granted
-  without fee, provided that the above copyright notice appear in
-  all copies and that both that the copyright notice and this
-  permission notice and warranty disclaimer appear in supporting
-  documentation, and that the name of the author not be used in
-  advertising or publicity pertaining to distribution of the
-  software without specific, written prior permission.
-
-  The author disclaims all warranties with regard to this
-  software, including all implied warranties of merchantability
-  and fitness.  In no event shall the author be liable for any
-  special, indirect or consequential damages or any damages
-  whatsoever resulting from loss of use, data or profits, whether
-  in an action of contract, negligence or other tortious action,
-  arising out of or in connection with the use or performance of
-  this software.
-*/
-
-/** \file
- *
- *  Main source file for the MIDI demo. This file contains the main tasks of
- *  the demo and is responsible for the initial application hardware configuration.
- */
-
-#include "midi.h"
-
-/** LUFA MIDI Class driver interface configuration and state information. This structure is
- *  passed to all MIDI Class driver functions, so that multiple instances of the same class
- *  within a device can be differentiated from one another.
- */
 USB_ClassInfo_MIDI_Device_t Keyboard_MIDI_Interface =
 	{
 		.Config =
@@ -61,29 +32,99 @@ USB_ClassInfo_MIDI_Device_t Keyboard_MIDI_Interface =
 	};
 
 
-/** Main program entry point. This routine contains the overall program flow, including initial
- *  setup of all components and the main program loop.
- */
+void set_gate(uint8_t gate, uint8_t val)
+{
+
+    if (gate == 0 && val) PORTC |= (1<<7);
+    else if (gate == 0 && !val) PORTC &= ~(1<<7);
+    else if (gate == 1 && val) PORTD |= (1<<6);
+    else if (gate == 1 && !val) PORTD &= ~(1<<6);
+    else if (gate == 2 && val) PORTB |= (1<<7);
+    else if (gate == 2 && !val) PORTB &= ~(1<<7);
+}
+
+void handle_cc(uint8_t chan, uint8_t d2, uint8_t d3)
+{
+}
+
+void handle_note_on(uint8_t chan, uint8_t d2, uint8_t d3)
+{
+    for (uint8_t i = 0; i < 3; i++) if (config.cv_channel[i] == chan)
+    {
+        cv_note[i] = d2;
+        set_gate(i, 0xFF);
+    //TODO: send pitch to DAC
+        return;
+    }
+
+
+}
+
+void handle_note_off(uint8_t chan, uint8_t d2)
+{
+    for (uint8_t i = 0; i < 3; i++) if (config.cv_channel[i] == chan)
+    {
+        if (cv_note[i] == d2)
+        {
+            cv_note[i] = 0xFF;
+            set_gate(i, 0x00);
+            return;
+        }
+
+    }
+}
+
+void handle_sysex(uint8_t d1, uint8_t d2, uint8_t d3) 
+{
+    if (d1 == 0x55 && d2==0x66 && d3==0x77) PINF = 1;
+}
+
+
 int main(void)
 {
-	SetupHardware();
 
-	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
+	clock_prescale_set(clock_div_1);
+
+    DDRF=0xFF;
+    DDRC=0xFF;
+    DDRB=0xFF;
+    DDRD=0xFF;
+
+    for (uint8_t i = 0; i < 3; i++) config.cv_channel[i] = i;
+
+	USB_Init();
 	GlobalInterruptEnable();
 
-	for (;;)
+	MIDI_EventPacket_t ev;
+    memset(&ev, 0, sizeof(MIDI_EventPacket_t));
+    while (true)	
 	{
-		MIDI_EventPacket_t ReceivedMIDIEvent;
-		while (MIDI_Device_ReceiveEventPacket(&Keyboard_MIDI_Interface, &ReceivedMIDIEvent))
+		while (MIDI_Device_ReceiveEventPacket(&Keyboard_MIDI_Interface, &ev))
 		{
-			if ((ReceivedMIDIEvent.Event == MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON)) && (ReceivedMIDIEvent.Data3 > 0))
+            uint8_t ev_number = ev.Data1 & 0xF0; 
+            uint8_t chan_number = ev.Data1 & 0x0F;
+            //TODO: extract channel and pass down to function
+			if (ev_number == MIDI_COMMAND_NOTE_ON)
             {
-                PORTF |= 1;
+                handle_note_on(chan_number, ev.Data2, ev.Data3);
             }
-			else
+			else if (ev_number == MIDI_COMMAND_CONTROL_CHANGE)
             {
-                PORTF &= ~1;
+                handle_cc(chan_number, ev.Data2, ev.Data3);
             }
+			else if (ev.Event == MIDI_EVENT(0, MIDI_COMMAND_SYSEX_1BYTE) ||
+		             ev.Event == MIDI_EVENT(0, MIDI_COMMAND_SYSEX_2BYTE) ||
+		             ev.Event == MIDI_EVENT(0, MIDI_COMMAND_SYSEX_3BYTE) ||
+		             ev.Event == MIDI_EVENT(0, MIDI_COMMAND_SYSEX_START_3BYTE))
+            
+            {
+                handle_sysex(ev.Data1, ev.Data2, ev.Data3);
+            }
+			else if (ev_number == MIDI_COMMAND_NOTE_OFF)
+            {
+                handle_note_off(chan_number, ev.Data2);
+            }
+            memset(&ev, 0, sizeof(MIDI_EventPacket_t));
 		}
 
 		MIDI_Device_USBTask(&Keyboard_MIDI_Interface);
@@ -91,60 +132,19 @@ int main(void)
 	}
 }
 
-/** Configures the board hardware and chip peripherals for the demo's functionality. */
-void SetupHardware(void)
-{
-	MCUSR &= ~(1 << WDRF);
-	wdt_disable();
-
-	clock_prescale_set(clock_div_1);
-
-	/* Hardware Initialization */
-    DDRF=0xFF;
-
-	USB_Init();
-}
-
-/*
-//MIDICommand = ((JoystickStatus & JOY_RIGHT)? MIDI_COMMAND_NOTE_ON : MIDI_COMMAND_NOTE_OFF);
-//MIDIPitch   = 0x3E;
-	if (MIDICommand)
-	{
-		MIDI_EventPacket_t MIDIEvent = (MIDI_EventPacket_t)
-			{
-				.Event       = MIDI_EVENT(0, MIDICommand),
-
-				.Data1       = MIDICommand | Channel,
-				.Data2       = MIDIPitch,
-				.Data3       = MIDI_STANDARD_VELOCITY,
-			};
-
-		MIDI_Device_SendEventPacket(&Keyboard_MIDI_Interface, &MIDIEvent);
-		MIDI_Device_Flush(&Keyboard_MIDI_Interface);
-	}
-*/
-
-
-/** Event handler for the library USB Connection event. */
 void EVENT_USB_Device_Connect(void)
 {
 }
 
-/** Event handler for the library USB Disconnection event. */
 void EVENT_USB_Device_Disconnect(void)
 {
 }
 
-/** Event handler for the library USB Configuration Changed event. */
 void EVENT_USB_Device_ConfigurationChanged(void)
 {
-	bool ConfigSuccess = true;
-
-	ConfigSuccess &= MIDI_Device_ConfigureEndpoints(&Keyboard_MIDI_Interface);
-
+	MIDI_Device_ConfigureEndpoints(&Keyboard_MIDI_Interface);
 }
 
-/** Event handler for the library USB Control Request reception event. */
 void EVENT_USB_Device_ControlRequest(void)
 {
 	MIDI_Device_ProcessControlRequest(&Keyboard_MIDI_Interface);

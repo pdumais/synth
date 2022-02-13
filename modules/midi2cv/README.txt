@@ -5,6 +5,7 @@ The board is programmed through the serial port pins with an FTDI cable. Not thr
 To test with vkeybd:
     vkeybd --addr 24:0
     The address is the combination of client:port as per /proc/asound/seq/clients
+    Testing sysex: amidi -p hw:2,0,0 -S "F0 00 00 <d1> <d2> <d3> F7"
 
 
 software

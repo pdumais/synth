@@ -3,13 +3,14 @@ hardware design
     coupling caps everywhere
 
 software
-    receive midi from din5
+    send clock to digital pin: need application to generate clock
+
+    implement spi functions to send to DACs
     send pitch to DACs
     send CC to DACs
-    send gates to digital pins
     send levels to DACs
-    send clock to digital pin
+    receive midi from din5
 
     receive sysex messages and configure. 
-    Save/load config from eeprom
+        Save/load config from eeprom
     
