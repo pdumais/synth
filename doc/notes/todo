@@ -67,6 +67,7 @@
     - atmega software for osc:
         need to remove noise from ADC:
             with software, filter out any changes that happen faster than 20hz. So only use an average value taken over 50ms
+    - LFO: be able to control frequency with CV. But we need to also control the waveshapper
 
 ============================================================= Shopping list ==========================================================
 - digikey
