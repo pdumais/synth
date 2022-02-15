@@ -7,14 +7,14 @@
                 - build and test boards
                 - circuit snapshot image and board pictures
             - clock gen
+                - Need to fix bad LED cathode connection
                 - build and test boards
                 - circuit snapshot image and board pictures
 
         - waiting for parts from digikey
             - Sequencer
                 - Test on breadboard
-                    test 74161 and BCD counter
-                    make sure knobs are left to right when looking at digit
+                    test circuit for gate again
                 - Send PCB to fab
                 - build and test boards
                 - circuit snapshot image and board pictures
@@ -28,16 +28,9 @@
                 - circuit snapshot image and board pictures
 
     - midi2CV
-        - hardware design
-            coupling caps everywhere
         - software
             receive midi from din5
             send pitch to DACs
-            send CC to DACs
-            send gates to digital pins
-            send levels to DACs
-            send clock to digital pin
-            receive sysex messages and configure. 
             Save/load config from eeprom
         - breadboard test
         - send to Fab

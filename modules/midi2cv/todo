@@ -1,16 +1,8 @@
-
-hardware design
-    coupling caps everywhere
-
 software
-    send clock to digital pin: need application to generate clock
-
-    implement spi functions to send to DACs
-    send pitch to DACs
-    send CC to DACs
-    send levels to DACs
+    send pitch to 12bit DACs
     receive midi from din5
-
-    receive sysex messages and configure. 
-        Save/load config from eeprom
+    Save/load config from eeprom
     
+
+Sending clock (Midi 0xF8) to digital pin: need application to generate clock: Left unimplemented in software
+Output impedence is 200ohm (DAC datasheet says max 25ma). Should be ok.

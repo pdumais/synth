@@ -40,41 +40,44 @@ USB_ClassInfo_MIDI_Device_t Keyboard_MIDI_Interface =
 	};
 
 
-void send_adc_data(uint8_t cs, uint16_t data)
+void send_dac_data(uint8_t cs, uint8_t dh, uint8_t dl)
 {
+    //TODO: Maybe this should be done asynchronously with a queue
     PORTF = ~cs;
-    //TODO:  send data thru SPI. Need to send async ? but then I need to create a queue
+    SPDR = dh; 
+    while(!(SPSR & (1 << SPIF)));
+    SPDR = dl; 
+    while(!(SPSR & (1 << SPIF)));
     PORTF = 0xFF;
 }
 
-void set_12bit_adc(uint8_t adc, uint16_t val)
+void set_12bit_dac(uint8_t dac, uint16_t val)
 {
     uint8_t cs = 0;
-    if (adc == 0) cs = 1 <<4;
-    else if (adc == 1) cs = 1 <<1;
-    else if (adc == 2) cs = 1 <<0;
+    if (dac == 0) cs = 1 <<7;
+    else if (dac == 1) cs = 1 <<6;
+    else if (dac == 2) cs = 1 <<5;
     else return;
 
-    val &= 0x0FFFL; 
-    val |= (0b0011) << 12L;
-    send_adc_data(cs, val);
+    //TODO
+    //val &= 0x0FFFL; 
+//    val |= (0b0011) << 12L;
+//    send_dac_data(cs, val);
 
 }
 
-void set_8bit_adc(uint8_t adc, uint8_t subdev, uint8_t val)
+void set_8bit_dac(uint8_t dac, uint8_t subdev, uint8_t val)
 {
     uint8_t cs = 0;
-    if (adc == 0) cs = 1 <<7;
-    else if (adc == 1) cs = 1 <<6;
-    else if (adc == 2) cs = 1 <<5;
+    if (dac == 0) cs = 1 <<4;
+    else if (dac == 1) cs = 1 <<1;
+    else if (dac == 2) cs = 1 <<0;
     else return;
 
-    uint16_t val16 = val;
-    val16 = val16 << 4L;
-
-    if (subdev == 1) val16 |= 0x8000;
-    val16 |= (0b0011) << 12L;
-    send_adc_data(cs, val16);
+    uint8_t dh = 0b00110000 | (val >> 4);
+    uint8_t dl = val << 4;
+    if (subdev == 1) dh |= 0x80;
+    send_dac_data(cs, dh, dl);
 }
 
 uint16_t get_pitch(uint8_t note)
@@ -98,7 +101,9 @@ void handle_cc(uint8_t chan, uint8_t d2, uint8_t d3)
 {
     for (uint8_t i = 0; i < 3; i++) if (config.cc[i].channel == chan && config.cc[i].id == d2)
     {
-        set_8bit_adc(i, 1, d3);
+        // The range is 0..127, let's double it so we can get the full 5v range
+        d3 = d3 <<1;
+        set_8bit_dac(i, 1, d3);
         return;
     }
 }
@@ -110,8 +115,9 @@ void handle_note_on(uint8_t chan, uint8_t d2, uint8_t d3)
         uint16_t pitch = get_pitch(d2);
         config.cv[i].current_note  = d2;
         set_gate(i, 0xFF); // Set Gate
-        set_8bit_adc(i, 0,  d3); // Set level
-        set_12bit_adc(i, pitch); // Set pitch
+        // The range is 0..127, let's double it so we can get the full 5v range
+        set_8bit_dac(i, 0,  d3 << 1); // Set level
+        set_12bit_dac(i, pitch); // Set pitch
         return;
     }
 
@@ -126,7 +132,7 @@ void handle_note_off(uint8_t chan, uint8_t d2)
         {
             config.cv[i].current_note = 0xFF;
             set_gate(i, 0x00);
-            set_8bit_adc(i, 0, 0); // Set level
+            set_8bit_dac(i, 0, 0); // Set level
             return;
         }
 
@@ -188,6 +194,9 @@ int main(void)
     DDRB=0xFF;
     DDRD=0xFF;
 
+    // Init SPI
+    SPCR = (1<<SPE) | (1<<MSTR) | (1<<SPR0);
+
 
     load_config();
 
@@ -228,6 +237,10 @@ int main(void)
 			else if (ev_number == MIDI_COMMAND_NOTE_OFF)
             {
                 handle_note_off(chan_number, ev.Data2);
+            }
+            else
+            {
+                PIND = 1;
             }
             memset(&ev, 0, sizeof(MIDI_EventPacket_t));
 		}

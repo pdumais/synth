@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.5.2">
+<eagle version="9.6.2">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
@@ -4293,7 +4293,6 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 <part name="GND3" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="SUPPLY2" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="5V" device=""/>
 <part name="C2" library="SparkFun-Capacitors" library_urn="urn:adsk.eagle:library:510" deviceset="0.1UF" device="-KIT-EZ-50V-20%" package3d_urn="urn:adsk.eagle:package:37428/1" value="0.1uF"/>
-<part name="GND4" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="R1" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="R-US_" device="0207/12" package3d_urn="urn:adsk.eagle:package:6240598/1" value="10k"/>
 <part name="R2" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="R-US_" device="0207/12" package3d_urn="urn:adsk.eagle:package:6240598/1" value="150"/>
 <part name="IC1" library="40xx" library_urn="urn:adsk.eagle:library:80" deviceset="4056" device="N" package3d_urn="urn:adsk.eagle:package:922/2"/>
@@ -4326,6 +4325,7 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 <part name="R24" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="R-US_" device="0207/12" package3d_urn="urn:adsk.eagle:package:6240598/1" value="150"/>
 <part name="C3" library="SparkFun-Capacitors" library_urn="urn:adsk.eagle:library:510" deviceset="0.1UF" device="-KIT-EZ-50V-20%" package3d_urn="urn:adsk.eagle:package:37428/1" value="0.1uF"/>
 <part name="SUPPLY4" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="5V" device=""/>
+<part name="SUPPLY5" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="5V" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -4355,7 +4355,6 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 <instance part="C2" gate="G$1" x="128.27" y="77.47" smashed="yes" rot="R90">
 <attribute name="VALUE" x="130.429" y="78.994" size="1.778" layer="96" font="vector" rot="R90"/>
 </instance>
-<instance part="GND4" gate="1" x="241.3" y="-17.78" smashed="yes"/>
 <instance part="R1" gate="G$1" x="119.38" y="86.36" smashed="yes" rot="R90">
 <attribute name="NAME" x="117.8814" y="82.55" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="122.682" y="82.55" size="1.778" layer="96" rot="R90"/>
@@ -4453,6 +4452,9 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 </instance>
 <instance part="SUPPLY4" gate="G$1" x="132.08" y="-55.88" smashed="yes" rot="R90">
 <attribute name="VALUE" x="129.286" y="-55.88" size="1.778" layer="96" rot="R90" align="bottom-center"/>
+</instance>
+<instance part="SUPPLY5" gate="G$1" x="241.3" y="-7.62" smashed="yes">
+<attribute name="VALUE" x="241.3" y="-4.826" size="1.778" layer="96" align="bottom-center"/>
 </instance>
 </instances>
 <busses>
@@ -4561,6 +4563,20 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 <junction x="135.89" y="-7.62"/>
 <junction x="135.89" y="-55.88"/>
 </segment>
+<segment>
+<pinref part="D2" gate="G$1" pin="+"/>
+<wire x1="227.33" y1="-62.23" x2="232.41" y2="-62.23" width="0.1524" layer="91"/>
+<wire x1="232.41" y1="-62.23" x2="232.41" y2="-12.7" width="0.1524" layer="91"/>
+<pinref part="D3" gate="G$1" pin="+"/>
+<wire x1="232.41" y1="-12.7" x2="227.33" y2="-12.7" width="0.1524" layer="91"/>
+<pinref part="D1" gate="G$1" pin="+"/>
+<wire x1="227.33" y1="33.02" x2="232.41" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="232.41" y1="33.02" x2="232.41" y2="-12.7" width="0.1524" layer="91"/>
+<junction x="232.41" y="-12.7"/>
+<wire x1="232.41" y1="-12.7" x2="241.3" y2="-12.7" width="0.1524" layer="91"/>
+<pinref part="SUPPLY5" gate="G$1" pin="5V"/>
+<wire x1="241.3" y1="-7.62" x2="241.3" y2="-12.7" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="GND" class="0">
 <segment>
@@ -4599,20 +4615,6 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 <wire x1="118.11" y1="5.08" x2="123.19" y2="5.08" width="0.1524" layer="91"/>
 <junction x="123.19" y="5.08"/>
 <pinref part="GND5" gate="1" pin="GND"/>
-</segment>
-<segment>
-<pinref part="D2" gate="G$1" pin="+"/>
-<wire x1="227.33" y1="-62.23" x2="232.41" y2="-62.23" width="0.1524" layer="91"/>
-<wire x1="232.41" y1="-62.23" x2="232.41" y2="-12.7" width="0.1524" layer="91"/>
-<pinref part="D3" gate="G$1" pin="+"/>
-<wire x1="232.41" y1="-12.7" x2="227.33" y2="-12.7" width="0.1524" layer="91"/>
-<pinref part="D1" gate="G$1" pin="+"/>
-<wire x1="227.33" y1="33.02" x2="232.41" y2="33.02" width="0.1524" layer="91"/>
-<wire x1="232.41" y1="33.02" x2="232.41" y2="-12.7" width="0.1524" layer="91"/>
-<junction x="232.41" y="-12.7"/>
-<wire x1="232.41" y1="-12.7" x2="241.3" y2="-12.7" width="0.1524" layer="91"/>
-<wire x1="241.3" y1="-12.7" x2="241.3" y2="-15.24" width="0.1524" layer="91"/>
-<pinref part="GND4" gate="1" pin="GND"/>
 </segment>
 <segment>
 <pinref part="ATTINY44" gate="G$1" pin="GND"/>

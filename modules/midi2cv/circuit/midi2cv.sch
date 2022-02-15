@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.5.2">
+<eagle version="9.6.2">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -7167,6 +7167,10 @@ Commonly used for small ceramic capacitors. Like our 0.1uF (http://www.sparkfun.
 <junction x="76.2" y="22.86"/>
 <pinref part="P+7" gate="1" pin="+5V"/>
 <wire x1="76.2" y1="22.86" x2="68.58" y2="22.86" width="0.1524" layer="91"/>
+<pinref part="U3" gate="G$0" pin="!SHDN!"/>
+<wire x1="81.28" y1="30.48" x2="76.2" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="76.2" y1="30.48" x2="76.2" y2="25.4" width="0.1524" layer="91"/>
+<junction x="76.2" y="25.4"/>
 </segment>
 <segment>
 <pinref part="U1" gate="G$0" pin="VREFA"/>
@@ -7180,6 +7184,10 @@ Commonly used for small ceramic capacitors. Like our 0.1uF (http://www.sparkfun.
 <junction x="152.4" y="22.86"/>
 <pinref part="P+6" gate="1" pin="+5V"/>
 <wire x1="152.4" y1="22.86" x2="147.32" y2="22.86" width="0.1524" layer="91"/>
+<pinref part="U1" gate="G$0" pin="!SHDN!"/>
+<wire x1="157.48" y1="30.48" x2="152.4" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="152.4" y1="30.48" x2="152.4" y2="25.4" width="0.1524" layer="91"/>
+<junction x="152.4" y="25.4"/>
 </segment>
 <segment>
 <pinref part="U2" gate="G$0" pin="VREFA"/>
@@ -7193,6 +7201,10 @@ Commonly used for small ceramic capacitors. Like our 0.1uF (http://www.sparkfun.
 <junction x="236.22" y="22.86"/>
 <pinref part="P+5" gate="1" pin="+5V"/>
 <wire x1="236.22" y1="22.86" x2="228.6" y2="22.86" width="0.1524" layer="91"/>
+<pinref part="U2" gate="G$0" pin="!SHDN!"/>
+<wire x1="243.84" y1="30.48" x2="236.22" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="236.22" y1="30.48" x2="236.22" y2="25.4" width="0.1524" layer="91"/>
+<junction x="236.22" y="25.4"/>
 </segment>
 <segment>
 <pinref part="12BITDAC2" gate="G$1" pin="VDD"/>
