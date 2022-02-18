@@ -1,0 +1,6 @@
+read TAR filesystem and find all files
+spi communication to DAC
+how to send data to DAC using the right sample rate?
+
+read CV input and Gate input
+loop-enable button and implement looping

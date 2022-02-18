@@ -4,21 +4,22 @@
 
 ============================================================= Future ==========================================================
 - Digital platform requirements
+    - design ideas
+        either we do:
+            - each modules has its own DAC
+            - 1 ADC module, 1 DAC module. All DSP module can be connected together thru i2s and the 
+                chain ends on the DAC module
     - at least 48khz sampling rate on the ADC
-    - ADC/DAC: 12bit? or 16 bit?
+    - i2s DAC with breakout boards 
         16bit DAC: MAX98357A
         24bit DAC: UDA1334A
-    - What I need is an "i2s codec". 
-        - This contains an DAC and a ADC. 
-        - It will communicate the data through the i2s bus
-        - some chips support encoding/decoding other digital formats than PCM. But I only need PCM
 
     - RAM: at 48khz, 16bit, I need 96k of RAM to hold a 1s buffer. 
         for 20ms I just need 20k
 
 - Modules:
-    - Noise generator
-        avalanche transistor
+    - Noise generator: Avalanche noise gen with a transistor and resistor
+        current design has a hum, and it also needs to clip the signal to -5,+5
 
     - ADSR and VCA:
         VCA chip
@@ -47,13 +48,17 @@
     - ring modulator
         - multiple designs exist. The best one seems to be with transformers
 
-    - midi2CV 
-        to be able to use midi keyboard and sofware synth
-        esp32
-        usb midi?
-        use LCD
-        select channels etc.
-
+    - drum machine
+        esp32 with 12bit DAC (or i2s DAC), or teensy 3.2 has an on-board 12bit DAC
+        8 samples in RAM at all times, load different sets (banks) from flash
+            button to cycle thru banks
+        CV input: quantize to 3 bits to select between 8 samples
+        8 buttons to play manually: 
+            generates CV using resistor array, and gate using capacitor
+        toggle switch for "loop-enable": loops sample as long as gate is high.
+        
+        get wave sample set and convert to .h
+        
 
     - sampler (granular synthesis?)
         - as an input source. instead of an oscillator, playback a sound file

@@ -1,0 +1,2 @@
+
+void ota_init();
