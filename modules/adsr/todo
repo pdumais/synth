@@ -1,2 +1,7 @@
 put CVs on each A,D,S,R? how to mix them? like the VCA?
 need to buffer the output signal?
+
+provide 5V to VCC pin? or is there an unregulated pin?
+validate arduino footprint and pins
+LEDs to follow state (red for idle)
+
