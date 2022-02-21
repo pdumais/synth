@@ -10,7 +10,7 @@
 #define BAUD_PRESCALE ((( F_CPU / ( USART_BAUDRATE * 16UL))) - 1)
 
 
-struct {
+typedef struct {
     struct {
         uint8_t channel;
         uint8_t current_note;
@@ -21,7 +21,11 @@ struct {
         uint8_t current_value;
     } cc[3];
     uint8_t clock_pw;
-} config;
+    uint32_t magic;
+} CONFIG;
+
+CONFIG EEMEM eeprom_config;
+CONFIG config;
 
 
 USB_ClassInfo_MIDI_Device_t Keyboard_MIDI_Interface =
@@ -96,8 +100,9 @@ void set_8bit_dac(uint8_t dac, uint8_t subdev, uint8_t val)
 
 uint16_t get_pitch(uint8_t note)
 {
-    //TODO: use same mapping than oscillator
-    return 0xFFF;
+    // Very naive interpretation.
+    // 4096/128 * note
+    return (4096 >> 5L) * note;
 }
 
 void set_gate(uint8_t gate, uint8_t val)
@@ -156,21 +161,24 @@ void handle_note_off(uint8_t chan, uint8_t d2)
 
 void load_config()
 {
-    // Set default config
-    config.clock_pw = 5;
-    for (uint8_t i = 0; i < 3; i++) 
+    eeprom_read_block(&config, &eeprom_config, sizeof(CONFIG));
+    if (config.magic != 0xDEADBEEF) 
     {
-        config.cv[i].channel = i;
-        config.cc[i].channel = 0;
-        config.cc[i].id = i;
+        // Set default config
+        config.clock_pw = 5;
+        for (uint8_t i = 0; i < 3; i++) 
+        {
+            config.cv[i].channel = i;
+            config.cc[i].channel = 0;
+            config.cc[i].id = i;
+        }
     }
-
-    //TODO: load config from eeprom
 }
 
 void save_config()
 {
-    //TODO: save to eeprom
+    config.magic = 0xDEADBEEF;
+    eeprom_write_block(&config, &eeprom_config, sizeof(CONFIG));
 }
 
 void handle_sysex(uint8_t d1, uint8_t d2, uint8_t d3) 
@@ -241,7 +249,7 @@ int main(void)
     DDRF=0xFF;
     DDRC=0xFF;
     DDRB=0xFF;
-    DDRD=0x0b11111110;
+    DDRD=0b11111110;
 
     // Init SPI
     SPCR = (1<<SPE) | (1<<MSTR) | (1<<SPR0);

@@ -46,6 +46,16 @@ void set_pwm_freq(uint16_t freq1, uint16_t duty1, uint16_t offset, uint16_t duty
     uint16_t t2 = counter_table[freq2];
     uint32_t d2 = ((uint32_t)t2*(uint32_t)duty2) >> 8L;  // t*duty/255
 
+    if (offset < 10) 
+    {
+        // Disable timer
+        TCCR3B &= ~(1 << CS32); 
+    }
+    else
+    {
+        TCCR3B |= (1 << CS32); 
+    }
+
     // De-phase both osc?
 //    if (OCR1A != t1 || OCR3A != t2) {
 //        TCNT1 = 0;				  
