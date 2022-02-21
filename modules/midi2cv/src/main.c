@@ -5,6 +5,11 @@
 #include <LUFA/Drivers/USB/USB.h>
 #include <LUFA/Platform/Platform.h>
 
+#define F_CPU 16000000L
+#define USART_BAUDRATE 31250
+#define BAUD_PRESCALE ((( F_CPU / ( USART_BAUDRATE * 16UL))) - 1)
+
+
 struct {
     struct {
         uint8_t channel;
@@ -40,6 +45,16 @@ USB_ClassInfo_MIDI_Device_t Keyboard_MIDI_Interface =
 	};
 
 
+void uart_init()
+{
+    unsigned int baud = BAUD_PRESCALE;
+    UBRR1H = (unsigned char)(baud>>8);
+    UBRR1L = (unsigned char)baud;
+    UCSR1B = (1<< RXEN1)|(1<< TXEN1);
+    UCSR1C = (1<< USBS1)|(3<< UCSZ10);
+
+}
+
 void send_dac_data(uint8_t cs, uint8_t dh, uint8_t dl)
 {
     //TODO: Maybe this should be done asynchronously with a queue
@@ -59,10 +74,9 @@ void set_12bit_dac(uint8_t dac, uint16_t val)
     else if (dac == 2) cs = 1 <<5;
     else return;
 
-    //TODO
-    //val &= 0x0FFFL; 
-//    val |= (0b0011) << 12L;
-//    send_dac_data(cs, val);
+    uint8_t dh = 0b00110000 | (val >> 8L);
+    uint8_t dl = val & 0xFF;
+    send_dac_data(cs, dh, dl);
 
 }
 
@@ -83,7 +97,7 @@ void set_8bit_dac(uint8_t dac, uint8_t subdev, uint8_t val)
 uint16_t get_pitch(uint8_t note)
 {
     //TODO: use same mapping than oscillator
-    return 0;
+    return 0xFFF;
 }
 
 void set_gate(uint8_t gate, uint8_t val)
@@ -133,6 +147,7 @@ void handle_note_off(uint8_t chan, uint8_t d2)
             config.cv[i].current_note = 0xFF;
             set_gate(i, 0x00);
             set_8bit_dac(i, 0, 0); // Set level
+            set_12bit_dac(i, 0); // Set pitch
             return;
         }
 
@@ -182,6 +197,40 @@ void handle_sysex(uint8_t d1, uint8_t d2, uint8_t d3)
     }
 }
 
+uint8_t check_serial_midi(uint8_t* buf, uint8_t i)
+{
+    uint8_t cmd = buf[0]&0xF0;
+
+    // Only read noteon, noteoff and cc
+    if (cmd != 0x90 && cmd != 0x80 && cmd != 0xC0) return 0;
+
+    // Command is complete
+    uint8_t chan = buf[0]&0x0F;
+    if (cmd == 0x90 && i == 3)
+    {
+        if (buf[2] == 0)
+        {
+            handle_note_off(chan, buf[1]);
+        }
+        else
+        {
+            handle_note_on(chan, buf[1], buf[2]);
+        }
+        return 0;
+    }
+    else if (cmd == 0x80 && i == 2)
+    {
+        handle_note_off(chan, buf[1]);
+        return 0;
+    }
+    else if (cmd == 0xC0 && i == 3)
+    {
+        handle_cc(chan, buf[1], buf[2]);
+        return 0;
+    }
+
+    return i;
+}
 
 int main(void)
 {
@@ -192,7 +241,7 @@ int main(void)
     DDRF=0xFF;
     DDRC=0xFF;
     DDRB=0xFF;
-    DDRD=0xFF;
+    DDRD=0x0b11111110;
 
     // Init SPI
     SPCR = (1<<SPE) | (1<<MSTR) | (1<<SPR0);
@@ -201,12 +250,25 @@ int main(void)
     load_config();
 
 	USB_Init();
+    uart_init();
 	GlobalInterruptEnable();
 
 	MIDI_EventPacket_t ev;
     memset(&ev, 0, sizeof(MIDI_EventPacket_t));
+    uint8_t uartbuf[8];
+    uint8_t uart_index = 0;
     while (true)	
 	{
+        while ((UCSR1A & ( 1 << RXC1)))
+        {
+            uint8_t c = UDR1;
+            uartbuf[uart_index] = c;
+
+            uart_index = (uart_index+1)&0b111;
+            uart_index = check_serial_midi((uint8_t*)&uartbuf[0], uart_index);
+
+        }
+
 		while (MIDI_Device_ReceiveEventPacket(&Keyboard_MIDI_Interface, &ev))
 		{
             uint8_t ev_number = ev.Data1 & 0xF0; 

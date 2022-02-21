@@ -20,5 +20,5 @@ Wiring for ISP
 
 
 
-avrdude  -c stk500 -v -v -pt44 -P /dev/ttyUSB10 -B8 -U lfuse:w:0xC2:m -U hfuse:w:0xDF:m efuse:w:0xFE:m
+avrdude  -c stk500 -v -v -pt44 -P /dev/ttyUSB10 -B8 -U lfuse:w:0xC2:m -U hfuse:w:0xDF:m -U efuse:w:0xFE:m
 avrdude  -c stk500 -v -v -pt44 -P /dev/ttyUSB10 -B8 -U flash:w:optiboot_attiny44_8000000L.hex:i

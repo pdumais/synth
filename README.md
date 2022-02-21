@@ -4,8 +4,8 @@
 - 5V system, but requires +12,-12 rails for modules using opamps
 - uses computer PSU
 - 2 signal paths:
-    1) The audio signal. -5 - +5V. Any digital conversion should happens with 24bit or at least 16 bit
-    2) Control Voltages. They work on unipolar 5V. Digital conversions of 10bits.
+    1) The audio signal. -5 - +5V. 
+    2) Control Voltages. They work on unipolar 5V.
 
 # Current modules
 - [dual VCO and quad LFO. Square only](modules/osc)
