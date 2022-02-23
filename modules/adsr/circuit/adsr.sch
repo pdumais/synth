@@ -1337,7 +1337,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <parts>
 <part name="U$1" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="MCP4921" device="" package3d_urn="urn:adsk.eagle:package:6240674/1"/>
 <part name="SUPPLY1" library="supply2" library_urn="urn:adsk.eagle:library:372" deviceset="+5V" device=""/>
-<part name="SUPPLY2" library="supply2" library_urn="urn:adsk.eagle:library:372" deviceset="GND" device=""/>
 <part name="ADSR_CV" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X4" device="" package3d_urn="urn:adsk.eagle:package:22407/2"/>
 <part name="JP3" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X4" device="" package3d_urn="urn:adsk.eagle:package:22407/2"/>
 <part name="SUPPLY3" library="supply2" library_urn="urn:adsk.eagle:library:372" deviceset="GND" device=""/>
@@ -1353,6 +1352,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="U$2" library="SparkFun-Retired" deviceset="ARDUINO_MINI" device=""/>
 <part name="SUPPLY8" library="supply2" library_urn="urn:adsk.eagle:library:372" deviceset="GND" device=""/>
 <part name="SUPPLY9" library="supply2" library_urn="urn:adsk.eagle:library:372" deviceset="GND" device=""/>
+<part name="SUPPLY2" library="supply2" library_urn="urn:adsk.eagle:library:372" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -1365,7 +1365,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <instance part="SUPPLY1" gate="+5V" x="116.84" y="60.96" smashed="yes">
 <attribute name="VALUE" x="114.935" y="64.135" size="1.778" layer="96"/>
 </instance>
-<instance part="SUPPLY2" gate="GND" x="2.54" y="-27.94" smashed="yes"/>
 <instance part="ADSR_CV" gate="A" x="132.08" y="76.2" smashed="yes">
 <attribute name="NAME" x="125.73" y="84.455" size="1.778" layer="95"/>
 <attribute name="VALUE" x="125.73" y="68.58" size="1.778" layer="96"/>
@@ -1414,6 +1413,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </instance>
 <instance part="SUPPLY8" gate="GND" x="71.12" y="78.74" smashed="yes"/>
 <instance part="SUPPLY9" gate="GND" x="-33.02" y="73.66" smashed="yes"/>
+<instance part="SUPPLY2" gate="GND" x="2.54" y="-27.94" smashed="yes"/>
 </instances>
 <busses>
 </busses>
@@ -1485,6 +1485,15 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="-33.02" y1="81.28" x2="-33.02" y2="76.2" width="0.1524" layer="91"/>
 <pinref part="SUPPLY9" gate="GND" pin="GND"/>
 </segment>
+<segment>
+<pinref part="U$1" gate="G$1" pin="LDAC"/>
+<wire x1="5.08" y1="-12.7" x2="2.54" y2="-12.7" width="0.1524" layer="91"/>
+<wire x1="2.54" y1="-12.7" x2="2.54" y2="-25.4" width="0.1524" layer="91"/>
+<pinref part="U$1" gate="G$1" pin="AVSS"/>
+<wire x1="20.32" y1="-25.4" x2="2.54" y2="-25.4" width="0.1524" layer="91"/>
+<pinref part="SUPPLY2" gate="GND" pin="GND"/>
+<junction x="2.54" y="-25.4"/>
+</segment>
 </net>
 <net name="GATE_IN" class="0">
 <segment>
@@ -1537,17 +1546,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="R1" gate="G$1" pin="1"/>
 <pinref part="SUPPLY7" gate="+5V" pin="+5V"/>
 <wire x1="-25.4" y1="50.8" x2="-25.4" y2="48.26" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="AVSS" class="0">
-<segment>
-<pinref part="U$1" gate="G$1" pin="LDAC"/>
-<wire x1="5.08" y1="-12.7" x2="2.54" y2="-12.7" width="0.1524" layer="91"/>
-<pinref part="SUPPLY2" gate="GND" pin="GND"/>
-<wire x1="2.54" y1="-12.7" x2="2.54" y2="-25.4" width="0.1524" layer="91"/>
-<pinref part="U$1" gate="G$1" pin="AVSS"/>
-<wire x1="20.32" y1="-25.4" x2="2.54" y2="-25.4" width="0.1524" layer="91"/>
-<junction x="2.54" y="-25.4"/>
 </segment>
 </net>
 <net name="N$4" class="0">

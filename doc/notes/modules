@@ -47,7 +47,8 @@
         
         get wave sample set and convert to .h
         
-    - sustain pedal to Gate CV
+    - sustain pedal to Gate CV: Just need 2 resistors and a perf board. But connector does not fit on perf board
+
     - sampler (granular synthesis?)
         - as an input source. instead of an oscillator, playback a sound file
         - The "Sparkfun Wav Trigger"/tsunami is basically just that
