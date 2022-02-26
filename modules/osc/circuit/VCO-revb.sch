@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.5.2">
+<eagle version="9.6.2">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -11440,12 +11440,12 @@ Source: AVX .. aphvc.pdf</description>
 <part name="LFO2" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="LED" device="5MM" package3d_urn="urn:adsk.eagle:package:6240538/1"/>
 <part name="LFO3" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="LED" device="5MM" package3d_urn="urn:adsk.eagle:package:6240538/1"/>
 <part name="LFO4" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="LED" device="5MM" package3d_urn="urn:adsk.eagle:package:6240538/1"/>
-<part name="GND7" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="GND2" device=""/>
 <part name="R6" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="R-US_" device="0207/12" package3d_urn="urn:adsk.eagle:package:6240598/1" value="1k"/>
 <part name="R7" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="R-US_" device="0207/12" package3d_urn="urn:adsk.eagle:package:6240598/1" value="1k"/>
 <part name="FUTURE" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="PINHD-1X8" device="BIG" package3d_urn="urn:adsk.eagle:package:6240707/1"/>
 <part name="C1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="025-024X044" package3d_urn="urn:adsk.eagle:package:23630/1" value="01uf"/>
 <part name="GND8" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="GND2" device=""/>
+<part name="SUPPLY5" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="VDD" device="" value="5V"/>
 </parts>
 <sheets>
 <sheet>
@@ -11547,7 +11547,6 @@ Source: AVX .. aphvc.pdf</description>
 <instance part="LFO4" gate="G$1" x="162.56" y="-43.18" smashed="yes">
 <attribute name="VALUE" x="168.275" y="-47.752" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="GND7" gate="G$1" x="96.52" y="25.4" smashed="yes"/>
 <instance part="R6" gate="G$1" x="165.1" y="20.32" smashed="yes" rot="R180">
 <attribute name="VALUE" x="168.91" y="23.622" size="1.778" layer="96" rot="R180"/>
 </instance>
@@ -11563,6 +11562,9 @@ Source: AVX .. aphvc.pdf</description>
 <attribute name="VALUE" x="22.479" y="52.324" size="1.778" layer="96" rot="R90"/>
 </instance>
 <instance part="GND8" gate="G$1" x="12.7" y="50.8" smashed="yes" rot="R270"/>
+<instance part="SUPPLY5" gate="VDD" x="106.68" y="27.94" smashed="yes" rot="R270">
+<attribute name="VALUE" x="109.474" y="27.94" size="1.778" layer="96" rot="R270" align="bottom-center"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -11595,6 +11597,11 @@ Source: AVX .. aphvc.pdf</description>
 <pinref part="PWR1" gate="G$1" pin="2"/>
 <pinref part="SUPPLY4" gate="VDD" pin="VDD"/>
 <wire x1="157.48" y1="38.1" x2="157.48" y2="45.72" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="STATUS" gate="G$1" pin="A"/>
+<pinref part="SUPPLY5" gate="VDD" pin="VDD"/>
+<wire x1="91.44" y1="27.94" x2="106.68" y2="27.94" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="3.3V" class="0">
@@ -11647,11 +11654,6 @@ Source: AVX .. aphvc.pdf</description>
 <pinref part="GND5" gate="G$1" pin="3.3V"/>
 <wire x1="149.86" y1="-55.88" x2="149.86" y2="-48.26" width="0.1524" layer="91"/>
 <junction x="149.86" y="-48.26"/>
-</segment>
-<segment>
-<pinref part="STATUS" gate="G$1" pin="A"/>
-<pinref part="GND7" gate="G$1" pin="3.3V"/>
-<wire x1="91.44" y1="27.94" x2="96.52" y2="27.94" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="C1" gate="G$1" pin="1"/>

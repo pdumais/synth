@@ -40,13 +40,21 @@ void set_pwm_freq(uint16_t freq1, uint16_t duty1, uint16_t offset, uint16_t duty
 {
     duty1 = duty1 >> 2L;
     duty2 = duty2 >> 2L;
+    offset = offset >> 7L;
+
     uint16_t freq2 = freq1+offset;
     uint16_t t1 = counter_table[freq1];
     uint32_t d1 = ((uint32_t)t1*(uint32_t)duty1) >> 8L;  // t*duty/255 
+
+//    uint16_t t2 = t1+(offset>>3L);
     uint16_t t2 = counter_table[freq2];
     uint32_t d2 = ((uint32_t)t2*(uint32_t)duty2) >> 8L;  // t*duty/255
 
-    if (offset < 10) 
+    // Put back both osc in sync
+//    TCNT1 = 0;				  
+//    TCNT3 = 0;				  
+
+/*  if (offset < 1)
     {
         // Disable timer
         TCCR3B &= ~(1 << CS32); 
@@ -54,13 +62,8 @@ void set_pwm_freq(uint16_t freq1, uint16_t duty1, uint16_t offset, uint16_t duty
     else
     {
         TCCR3B |= (1 << CS32); 
-    }
+    }*/
 
-    // De-phase both osc?
-//    if (OCR1A != t1 || OCR3A != t2) {
-//        TCNT1 = 0;				  
-//        TCNT3 = d2/2L;				  
-//    }
     OCR1A = t1;
     OCR1B = d1;
     OCR3A = t2;
