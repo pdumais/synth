@@ -9,9 +9,13 @@
 #define LFO3_FREQ 2
 #define LFO4_FREQ 3
 
+#define ADC_DEBOUNCE_DEPTH 0L
+#define ADC_DEBOUNCE_COUNT ((1L<<ADC_DEBOUNCE_DEPTH))
 
 static volatile uint16_t freqs[6];
 static volatile uint16_t adcs[8];
+static volatile uint16_t adcs_temp[8];
+static volatile uint16_t adc_debounce[8];
 
 uint16_t lfo_vc_to_count(uint16_t vc)
 {
@@ -32,6 +36,12 @@ void reset_counter(uint8_t i) {
 void adc_init() {
     ADMUX = (1 << REFS0) | (0 << ADLAR); // AVcc with capacitor to ARef
     ADCSRA |= (1 << ADPS0) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADEN) | (1<<ADSC);
+
+    for (uint8_t i = 0; i <8; i++) {
+        adcs_temp[i] = 0;
+        adc_debounce[i] = ADC_DEBOUNCE_COUNT;
+    }
+
 }
 
 uint8_t adc_read() {
@@ -44,10 +54,28 @@ uint8_t adc_read() {
     ADMUX = (admux & 0b11100000) | ((index +1) & 0b00111);
     ADCSRA |= (1 << ADIF) | (1<<ADSC); // Clear ADIF by writing 1 in it, and start a new conversion
     uint16_t temp = ((h<<8L)|l);
-    if (adcs[index] == temp) return 0xFF;
 
+    
+// By debouncing the ADC value, we get a more accurate value that doesn't bounce around so the frequency is more stable
+// but it really changes the sound and makes it sound more "digital". By disabling debouncing (0L), we
+// get a nice analog-like sound. If enabling debouncing, a value of 4L works good (max is 6L). This would 
+// create an average of 16 samples. 
+#if ADC_DEBOUNCE_DEPTH == 0L
+    if (adcs[index] == temp) return 0xFF;
     adcs[index] = temp; 
     return index;
+#else
+    adcs_temp[index] += temp;
+    adc_debounce[index]--;
+    if (adc_debounce[index] == 0) {
+            adcs[index] = adcs_temp[index] >> ADC_DEBOUNCE_DEPTH;
+            adcs_temp[index] = 0;
+            adc_debounce[index] = ADC_DEBOUNCE_COUNT;
+            return index;
+    }
+    return 0xFF;
+#endif
+
 }
 
 int main(void)
@@ -55,6 +83,7 @@ int main(void)
     PORTB = 0x0;
     DDRB = 0xFF;
     DDRD = 0xFF;
+
 
     freqs[LFO1_FREQ] = lfo_vc_to_count(250);
     freqs[LFO2_FREQ] = lfo_vc_to_count(250);

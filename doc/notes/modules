@@ -22,26 +22,10 @@
         current design has a hum, and it also needs to clip the signal to -5,+5
 
     - Delay / flanger
-        Test the V3207 delay
-        create delay with ADC/DAC
-            - A delay with configurable size between 1ms to 20ms. CV controlled
-                - when CV is from an LFO, we effectively get a flanger
-            - If using multiple delays, we can get a chorus, or multiple voices out of a VCO
-            - SAMD51: 
-                3.3v, so need to convert output back to 5v
-                12bit dac. If 16bit is needed, use AD5686 or ADS1115
-        - test with V3208D?
+        Test the V3208 delay
 
     - drum machine
-        esp32 with 12bit DAC (or i2s DAC), or teensy 3.2 has an on-board 12bit DAC
-        8 samples in RAM at all times, load different sets (banks) from flash
-            button to cycle thru banks
-        CV input: quantize to 3 bits to select between 8 samples
-        8 buttons to play manually: 
-            generates CV using resistor array, and gate using capacitor
-        toggle switch for "loop-enable": loops sample as long as gate is high.
-        
-        get wave sample set and convert to .h
+        analog
         
     - sustain pedal to Gate CV: Just need 2 resistors and a perf board. But connector does not fit on perf board
 
