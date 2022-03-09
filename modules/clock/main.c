@@ -99,8 +99,7 @@ int main(void)
     PORTA=0b110;
     PORTB=0;
     DDRA = 0b11111001;
-    DDRB = 0b00000110;
-
+    DDRB = 0b00000111;
 
     timer_init();
     set_bpm(current_bpm);
