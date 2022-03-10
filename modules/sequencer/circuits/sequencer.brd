@@ -2374,6 +2374,10 @@ design rules under a new name.</description>
 <attribute name="SPICEPREFIX" value="C" x="48.26" y="6.35" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="VALUE" x="45.593" y="8.89" size="1.27" layer="25" ratio="10" rot="R180"/>
 </element>
+<element name="R19" library="adafruit" library_urn="urn:adsk.eagle:library:420" package="0207/12" package3d_urn="urn:adsk.eagle:package:6240598/1" value="1K" x="15.24" y="-119.38" smashed="yes">
+<attribute name="NAME" x="12.065" y="-117.983" size="1.27" layer="25" ratio="10"/>
+<attribute name="VALUE" x="12.954" y="-120.0658" size="1.27" layer="27" ratio="10"/>
+</element>
 </elements>
 <signals>
 <signal name="GND">
@@ -2553,7 +2557,6 @@ design rules under a new name.</description>
 <signal name="CLK_IN">
 <contactref element="INPUTS1" pad="5"/>
 <contactref element="CD4017" pad="14"/>
-<contactref element="2N2" pad="B"/>
 <contactref element="V1" pad="2"/>
 <contactref element="R24" pad="1"/>
 <wire x1="19.05" y1="74.93" x2="20.32" y2="76.2" width="0.1524" layer="16"/>
@@ -2572,11 +2575,12 @@ design rules under a new name.</description>
 <wire x1="16.8148" y1="72.6948" x2="19.05" y2="74.93" width="0.1524" layer="16"/>
 <wire x1="15.11374375" y1="72.6948" x2="16.8148" y2="72.6948" width="0.1524" layer="16"/>
 <wire x1="11.2522" y1="72.39" x2="14.80894375" y2="72.39" width="0.1524" layer="16"/>
-<wire x1="26.67" y1="12.7" x2="21.59" y2="12.7" width="0.1524" layer="1"/>
 <wire x1="21.59" y1="12.7" x2="20.32" y2="11.43" width="0.1524" layer="1"/>
 <wire x1="20.32" y1="11.43" x2="20.32" y2="3.81" width="0.1524" layer="1"/>
 <wire x1="22.86" y1="8.89" x2="20.32" y2="8.89" width="0.1524" layer="1"/>
 <wire x1="20.32" y1="8.89" x2="20.32" y2="3.81" width="0.1524" layer="1"/>
+<contactref element="R19" pad="2"/>
+<wire x1="20.32" y1="3.81" x2="21.59" y2="-119.38" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$3">
 <contactref element="CD4017" pad="3"/>
@@ -2927,6 +2931,11 @@ design rules under a new name.</description>
 <contactref element="R18" pad="1"/>
 <contactref element="IC3" pad="14"/>
 <wire x1="49.53" y1="53.34" x2="49.53" y2="55.88" width="0.1524" layer="1"/>
+</signal>
+<signal name="N$43">
+<contactref element="2N2" pad="B"/>
+<contactref element="R19" pad="1"/>
+<wire x1="26.67" y1="12.7" x2="8.89" y2="-119.38" width="0" layer="19" extent="1-1"/>
 </signal>
 </signals>
 <mfgpreviewcolors>

@@ -5,4 +5,11 @@
 *.s#*
 t
 firmware.hex
+*.bin
+*.eep
+*.elf
+*.hex
+*.lss
+*.map
+*.sym
 

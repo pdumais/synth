@@ -21943,6 +21943,7 @@ Created by Ella Wu, 2021-05-31&lt;br&gt;
 <part name="GND14" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="SUPPLY13" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="5V" device=""/>
 <part name="C3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="CPOL-US" device="E2,5-6E" package3d_urn="urn:adsk.eagle:package:23430/1" value="100uf"/>
+<part name="R19" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="R-US_" device="0207/12" package3d_urn="urn:adsk.eagle:package:6240598/1" value="1K"/>
 </parts>
 <sheets>
 <sheet>
@@ -22164,6 +22165,9 @@ be powered from 12v and CV would be attenuated proportionally with the voltage m
 </instance>
 <instance part="C3" gate="G$1" x="312.42" y="-63.5" smashed="yes" rot="R180">
 <attribute name="VALUE" x="306.324" y="-59.309" size="1.778" layer="96" rot="R270"/>
+</instance>
+<instance part="R19" gate="G$1" x="185.42" y="-68.58" smashed="yes" rot="R180">
+<attribute name="VALUE" x="186.69" y="-70.358" size="1.778" layer="96" rot="R180"/>
 </instance>
 </instances>
 <busses>
@@ -22413,9 +22417,9 @@ be powered from 12v and CV would be attenuated proportionally with the voltage m
 <label x="0" y="-12.7" size="1.778" layer="95" rot="R90" xref="yes"/>
 </segment>
 <segment>
-<label x="187.96" y="-68.58" size="1.778" layer="95" rot="R180" xref="yes"/>
-<pinref part="2N2" gate="G$1" pin="B"/>
-<wire x1="187.96" y1="-68.58" x2="193.04" y2="-68.58" width="0.1524" layer="91"/>
+<label x="175.26" y="-68.58" size="1.778" layer="95" rot="R270" xref="yes"/>
+<wire x1="175.26" y1="-68.58" x2="180.34" y2="-68.58" width="0.1524" layer="91"/>
+<pinref part="R19" gate="G$1" pin="2"/>
 </segment>
 <segment>
 <pinref part="V1" gate="1" pin="CLK"/>
@@ -22851,6 +22855,13 @@ be powered from 12v and CV would be attenuated proportionally with the voltage m
 <wire x1="223.52" y1="68.58" x2="223.52" y2="76.2" width="0.1524" layer="91"/>
 <pinref part="IC3" gate="A" pin="G"/>
 <wire x1="223.52" y1="76.2" x2="215.9" y2="76.2" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$43" class="0">
+<segment>
+<pinref part="2N2" gate="G$1" pin="B"/>
+<wire x1="190.5" y1="-68.58" x2="193.04" y2="-68.58" width="0.1524" layer="91"/>
+<pinref part="R19" gate="G$1" pin="1"/>
 </segment>
 </net>
 </nets>

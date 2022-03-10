@@ -30,8 +30,8 @@ void timer_init() {
     TCCR1A = (1<< COM1B1) | (1<< COM1B0) | (1 << WGM11) | (1 << WGM10);
     TCCR1B = (1 << WGM13) | (1 << WGM12) | (1 << CS12); // divided by 256: 62500 times per second
 
-    //TCCR3A = (1<< COM3B1) | (1<< COM3B0) | (1 << WGM31) | (1 << WGM30);
-    //TCCR3B = (1 << WGM33) | (1 << WGM32) | (1 << CS32); // divided by 256: 62500 times per second
+    TCCR3A = (1<< COM3B1) | (1<< COM3B0) | (1 << WGM31) | (1 << WGM30);
+    TCCR3B = (1 << WGM33) | (1 << WGM32) | (1 << CS32); // divided by 256: 62500 times per second
 
     TCNT0 = 0;				  
     TCNT1 = 0;				  
