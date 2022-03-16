@@ -91,6 +91,7 @@ int main (void)
     SPCR = (1<<SPE) | (1<<MSTR) | (1<<SPR0);
     dac_write(0xFFF);
 
+
     uint8_t flash_ms_delay = 127;
     uint16_t ms_count = 0;
     while (1)
@@ -115,7 +116,7 @@ int main (void)
                 {
                     state = STATE_RELEASE;
                     ms_count=0;
-                    PORTD = 0b11111111; 
+                    PORTD = 0b11110000; 
                 }
             }
             else
@@ -137,7 +138,7 @@ int main (void)
 
             if (state == STATE_ATTACK)
             {
-                PORTD = 0b01111111; // Steady Blue LED
+                PORTD = 0b01110000; // Steady Blue LED
                 uint16_t delta_level = 0x7FFFL-level; 
                 uint16_t delta_time = (adcs[A_PIN]>ms_count)?adcs[A_PIN]-ms_count:1;
                 uint16_t rate = delta_level/delta_time; 
@@ -152,7 +153,7 @@ int main (void)
             }
             else if (state == STATE_DECAY)
             {
-                PORTD = 0b10111111; // Steady yellow LED
+                PORTD = 0b10110000; // Steady yellow LED
                 uint16_t s = adcs[S_PIN] << 3L;
                 uint16_t delta_level = (s<level)?level-s:0; 
                 uint16_t delta_time = (adcs[D_PIN]>ms_count)?adcs[D_PIN]-ms_count:1;
@@ -166,7 +167,7 @@ int main (void)
             }
             else if (state == STATE_SUSTAIN)
             {
-                PORTD = 0b11011111; // Steady green LED
+                PORTD = 0b11010000; // Steady green LED
                 level = adcs[S_PIN]<<3L; // to 15bit level
                 ms_count=0;
             }
@@ -188,11 +189,12 @@ int main (void)
             }
             else if (state == STATE_IDLE)
             {
-                PORTD = 0b11101111; // Steady red LED
+                PORTD = 0b11100000; // Steady red LED
                 level = 0;
             }
 
             dac_write(level>>3L);
         }
+        
     }
 }

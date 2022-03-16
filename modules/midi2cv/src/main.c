@@ -10,6 +10,8 @@
 #define BAUD_PRESCALE ((( F_CPU / ( USART_BAUDRATE * 16UL))) - 1)
 
 
+uint8_t current_serial_midi_status = 0;
+
 typedef struct {
     struct {
         uint8_t channel;
@@ -61,7 +63,6 @@ void uart_init()
 
 void send_dac_data(uint8_t cs, uint8_t dh, uint8_t dl)
 {
-    //TODO: Maybe this should be done asynchronously with a queue
     PORTF = ~cs;
     SPDR = dh; 
     while(!(SPSR & (1 << SPIF)));
@@ -80,6 +81,7 @@ void set_12bit_dac(uint8_t dac, uint16_t val)
 
     uint8_t dh = 0b00110000 | (val >> 8L);
     uint8_t dl = val & 0xFF;
+
     send_dac_data(cs, dh, dl);
 
 }
@@ -101,8 +103,8 @@ void set_8bit_dac(uint8_t dac, uint8_t subdev, uint8_t val)
 uint16_t get_pitch(uint8_t note)
 {
     // Very naive interpretation.
-    // 4096/128 * note
-    return (4096 >> 5L) * note;
+    // 4096/128 * note = note*32 = note << 5
+    return ((uint16_t)note) << 5L;
 }
 
 void set_gate(uint8_t gate, uint8_t val)
@@ -131,12 +133,16 @@ void handle_note_on(uint8_t chan, uint8_t d2, uint8_t d3)
 {
     for (uint8_t i = 0; i < 3; i++) if (config.cv[i].channel == chan)
     {
+        set_gate(i, 0x00); // Clear Gate in case we're just changing note
+        //we need to give time to the gate to be down long enough 
+        // This is about 40ms
+        for (uint16_t n=0;n<15000L;n++); 
         uint16_t pitch = get_pitch(d2);
         config.cv[i].current_note  = d2;
-        set_gate(i, 0xFF); // Set Gate
         // The range is 0..127, let's double it so we can get the full 5v range
         set_8bit_dac(i, 0,  d3 << 1); // Set level
         set_12bit_dac(i, pitch); // Set pitch
+        set_gate(i, 0xFF); 
         return;
     }
 
@@ -152,7 +158,7 @@ void handle_note_off(uint8_t chan, uint8_t d2)
             config.cv[i].current_note = 0xFF;
             set_gate(i, 0x00);
             set_8bit_dac(i, 0, 0); // Set level
-            set_12bit_dac(i, 0); // Set pitch
+            //set_12bit_dac(i, 0); // Set pitch
             return;
         }
 
@@ -207,37 +213,33 @@ void handle_sysex(uint8_t d1, uint8_t d2, uint8_t d3)
 
 uint8_t check_serial_midi(uint8_t* buf, uint8_t i)
 {
-    uint8_t cmd = buf[0]&0xF0;
+    uint8_t cmd = current_serial_midi_status&0xF0;
+    uint8_t chan = current_serial_midi_status&0x0F;
 
-    // Only read noteon, noteoff and cc
-    if (cmd != 0x90 && cmd != 0x80 && cmd != 0xC0) return 0;
-
-    // Command is complete
-    uint8_t chan = buf[0]&0x0F;
-    if (cmd == 0x90 && i == 3)
+    if (cmd == 0x90 && i == 1)
     {
-        if (buf[2] == 0)
+        if (buf[1] == 0)
         {
-            handle_note_off(chan, buf[1]);
+            handle_note_off(chan, buf[0]);
         }
         else
         {
-            handle_note_on(chan, buf[1], buf[2]);
+            handle_note_on(chan, buf[0], buf[1]);
         }
         return 0;
     }
-    else if (cmd == 0x80 && i == 2)
+    else if (cmd == 0x80 && i == 0)
     {
-        handle_note_off(chan, buf[1]);
+        handle_note_off(chan, buf[0]);
         return 0;
     }
-    else if (cmd == 0xC0 && i == 3)
+    else if (cmd == 0xC0 && i == 1)
     {
-        handle_cc(chan, buf[1], buf[2]);
+        handle_cc(chan, buf[0], buf[1]);
         return 0;
     }
 
-    return i;
+    return (i+1)&0b111;
 }
 
 int main(void)
@@ -261,6 +263,7 @@ int main(void)
     uart_init();
 	GlobalInterruptEnable();
 
+
 	MIDI_EventPacket_t ev;
     memset(&ev, 0, sizeof(MIDI_EventPacket_t));
     uint8_t uartbuf[8];
@@ -270,9 +273,18 @@ int main(void)
         while ((UCSR1A & ( 1 << RXC1)))
         {
             uint8_t c = UDR1;
-            uartbuf[uart_index] = c;
 
-            uart_index = (uart_index+1)&0b111;
+            // Ignore Status message. They can be received anytime, even in the middle of another message
+            if (c >= 0xF8) continue;
+
+           // Is this a status message? 
+            if (c & 0x80) {
+                uart_index = 0;
+                current_serial_midi_status = c; 
+                continue;
+            }
+
+            uartbuf[uart_index] = c;
             uart_index = check_serial_midi((uint8_t*)&uartbuf[0], uart_index);
 
         }

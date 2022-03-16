@@ -1,3 +1,11 @@
+# UPDATE
+This turns out to be a not so good design.
+The stepper and the binary counter are out of sink, so the step number being displayed is not accurate. I suspect
+that this is happening because of a difference in startup time betewen both chips, so one chip misses
+a clock while the other has processed one already.
+
+But the sequencing part of it does work. So It's a good prototype.
+
 # Design
 This is a 8 step sequencer based on the 4017 counter. 
 
