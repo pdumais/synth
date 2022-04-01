@@ -1,13 +1,13 @@
 SERIALPORT=/dev/ttyUSB0
-DEVICE=m32
-SOURCES=main.c
+DEVICE=t84
+SOURCES=main.c uart.c
 OBJECTS=$(SOURCES:.c=.o)
 OUTPUTNAME=firmware
 
 CC=avr-gcc
 OBJCOPY=avr-objcopy
 LDFLAGS=
-CFLAGS= -mmcu=atmega32 --save-temps -O3
+CFLAGS= -mmcu=attiny84 --save-temps -O3
 
 all: $(OUTPUTNAME).hex
 
@@ -27,5 +27,5 @@ clean:
 
 install: $(OUTPUTNAME).hex
 	# FTDI rx to PA1, tx to PA2
-	avrdude -carduino -P $(SERIALPORT) -b115200 -p$(DEVICE)  -U flash:w:$(OUTPUTNAME).hex:i
+	avrdude -carduino -P $(SERIALPORT) -b19200 -p$(DEVICE)  -U flash:w:$(OUTPUTNAME).hex:i
 

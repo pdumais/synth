@@ -1,13 +1,20 @@
 #define F_CPU            8000000UL
+#define USART_BAUDRATE   31250
+#define BAUD_PRESCALE (F_CPU / USART_BAUDRATE) // 256
+#define DIVISOR             8
+#define PRESCALE            2
+#define FULL_BIT_TICKS      ( CYCLES_PER_BIT / DIVISOR )
+
 #define BPM_STABLE_COUNT 120
 #define MSG_DISPLAY_TIME 100
-#define MAX_SQ 1
+#define MAX_SQ 2
 #define ADMUX_VAL (0 << REFS0) | (0 << ADLAR)
 
 #define TRIGGER_TOP 4000L 
 #define TRIGGER_THRESH (TRIGGER_TOP-500L) 
+#define MAX_VOICE 4
 
-
+#include "uart.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
@@ -22,6 +29,7 @@ struct sq_config {
 };
 
 struct sq_config sq[4];
+uint16_t voice_trigger[MAX_VOICE] ;
 uint16_t rnd1 = 0xACE1;
 uint32_t rnd2 = 0xDEADBEEF;
 
@@ -38,29 +46,13 @@ uint8_t get_rnd() {
 
 void timer_init() 
 {
-    /* attiny44
-    // Noise timer
-    TCCR0A = 1<<WGM01; 
-    TCCR0B = (1 << CS02) | (0<< CS00); // divided by 64 -> 125khz 
-    OCR0A = 0; // 62.5khz 
-    TCNT0=0;
-
     // Square wave timer
     TCCR1A = 0;
-    TCCR1B = (1<<WGM12) |(0 << CS11) | (1<< CS12); // divided by 256 -> 31250 hz
-    OCR1A = 0; 
-    TCNT1=0;*/
-
-    // Noise timer
-    TCCR0 = (1<<WGM01) | (1 << CS01) | (1<< CS00); // divided by 64 -> 125khz 
-    OCR0 = 0; // 62.5khz 
-    TCNT0=0;
-
-    // Square wave timer
-    TCCR1A = 0;
-    TCCR1B = (1<<WGM12) |(0 << CS11) | (1<< CS12); // divided by 256 -> 31250 hz
+    //TCCR1B = (1<<WGM12) |(0 << CS11) | (1<< CS12); // divided by 256 -> 31250 hz
+    TCCR1B = (1<<WGM12) |(0 << CS11) | (1<< CS10); // divided by 64 -> 125khz
     OCR1A = 0; 
     TCNT1=0;
+
 }
 
 
@@ -78,16 +70,60 @@ void set_sq_freq(uint8_t i, uint16_t f) {
 }
 
 
+void midi_init() {
+    PORTA |= (1<<6); // Enable pull-up on RX pin
+    uart_init();
+}
+
+
+void trigger_voice(uint8_t voice) {
+    if (voice >= MAX_VOICE) return;
+    voice_trigger[voice] = TRIGGER_TOP;
+}
+
+void process_triggers() {
+    for (uint8_t i = 0; i < MAX_VOICE; i++) {
+        if (voice_trigger[i] > 0) {
+            voice_trigger[i]--;
+        }
+    }
+
+    if (voice_trigger[0] > TRIGGER_THRESH) {
+        PORTB |= 1;
+    } else {
+        PORTB &= 0xFE;
+    }
+
+    if (voice_trigger[1] > TRIGGER_THRESH) {
+        PORTB |= 2;
+    } else {
+        PORTB &= 0xFD;
+    }
+
+    if (voice_trigger[2] > TRIGGER_THRESH) {
+        PORTB |= 4;
+    } else {
+        PORTB &= 0xFB;
+    }
+
+    if (voice_trigger[3] > TRIGGER_THRESH) {
+        PORTA |= 1;
+        DDRA |= 1; 
+    } else {
+        PORTA &= 0xFE;
+        DDRA &= 0xFE; // Leave pin floating, so we dont interfere with button
+    }
+}
+
 int main(void)
 {
-    DDRA = 0b11000111; 
+    DDRA = 0b10100111; 
     DDRB = 0xFF;
 
+    midi_init();
     timer_init();
-    adc_init();
+    //adc_init();
 
-    //sq[0].f = 8000L;
-//    sq[1].f = 5010L; 
     sq[0].f = 8000L;
     sq[1].f = 4010L; 
 
@@ -99,49 +135,48 @@ int main(void)
     uint8_t rnd_index = 0;
     uint8_t rnd_last = 0;
 
-    uint16_t voice1_trigger = 0;
+    uint8_t metal_pin = 0;
+
+    for (uint8_t i = 0; i < MAX_VOICE; i++) voice_trigger[i] = 0;
+
+    sei();
+    uint8_t c;
+    uint8_t midi_status = 0;
+    uint8_t midi_d1=0;
+
+    for (uint8_t i = 0; i < MAX_VOICE; i++) voice_trigger[i] = 0;
 
     while (1) {
+        if (uart_getc(&c) == 1) {
+            if (c&0x80) {
+                if ((c>>4) == 0x09) midi_status = 0x90; else midi_status = 0;
+                midi_d1 = 0;
+            } else if (midi_status == 0x90) {
+                if (midi_d1) {
+                    if (c != 0) {
+                        uint8_t n = midi_d1 % 12;
+                        trigger_voice(n);
+                    }
 
-        if ((ADCSRA & (1 << ADIF)))
-        {
-            uint8_t adc = ADMUX & 0b111;
-            uint16_t l = ADCL;
-            uint16_t h = ADCH;
-            ADCSRA |= (1 << ADIF) | (1<<ADSC); // Clear ADIF by writing 1 in it, and start a new conversion
-
-            uint16_t temp = ((h<<8L)|l);
-
-            temp = temp >> 8L;
-            if (adc == 5) {
-                if (temp >=3 && voice1_trigger == 0) voice1_trigger = TRIGGER_TOP;
+                    midi_d1 = 0;
+                } else {
+                    midi_d1 = c;
+                }
             }
+
+
         }
 
+        if (TIFR1 & (1<<OCF1A)) {
+            TIFR1 = (1<<OCF1A);
 
-        if (TIFR & (1<<OCF0)) {
-            TIFR = (1<<OCF0);
-//            get_rnd();
-//            if (get_rnd()) {
-//                PINA = 1<<7;
-//            }
-        }
-
-
-        if (TIFR & (1<<OCF1A)) {
-            TIFR = (1<<OCF1A);
-
-/*            if (voice1_trigger > 0) {
-                voice1_trigger--;
+            if (get_rnd()) {
+                PINA = (1<<5);
             }
-            if (voice1_trigger > TRIGGER_THRESH) {
-                PORTB |= 1;
-            } else {
-                PORTB &= 0xFE;
-            }*/
 
-            uint8_t metal_pin = 0;
-
+            process_triggers();
+    
+            metal_pin = 0;
             for (uint8_t i = 0; i < MAX_SQ; i ++) {
                 sq[i].i--;
                 if (sq[i].i == 0) {
@@ -151,9 +186,9 @@ int main(void)
                 }
             }
             if (metal_pin) {
-                PORTA |= (1<<6);
+                PORTA |= (1<<7);
             } else {
-                PORTA &= ~(1<<6);
+                PORTA &= ~(1<<7);
             }
 
         }
