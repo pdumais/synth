@@ -189,10 +189,10 @@
 <hole x="31.75" y="77.47" drill="4.000246875"/>
 <hole x="71.12" y="76.2" drill="4.000246875"/>
 <hole x="31.75" y="2.54" drill="4.000246875"/>
-<text x="71.12" y="62.23" size="1.778" layer="27" rot="R90">G</text>
-<text x="68.58" y="69.85" size="1.778" layer="27">+5</text>
-<text x="68.58" y="67.31" size="1.778" layer="27">+12</text>
-<text x="68.58" y="64.77" size="1.778" layer="27">-12</text>
+<text x="71.12" y="69.85" size="1.778" layer="27" rot="R90">G</text>
+<text x="69.85" y="62.23" size="1.778" layer="27">+5</text>
+<text x="69.85" y="64.77" size="1.778" layer="27">+12</text>
+<text x="69.85" y="67.31" size="1.778" layer="27">-12</text>
 <text x="69.85" y="40.64" size="1.778" layer="21">G</text>
 <text x="69.85" y="30.48" size="1.778" layer="21">G</text>
 <text x="69.85" y="20.32" size="1.778" layer="21">G</text>

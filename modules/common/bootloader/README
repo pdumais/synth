@@ -6,3 +6,11 @@ Burning bootloader:
 
 The, using FTDI:
 avrdude -vvv -pm1284p -P /dev/ttyUSB10 -carduino -b115200 -U flash:w:firmware.hex:i
+
+
+
+
+
+
+    avrdude  -c stk500 -pm32 -P /dev/ttyUSB9 -b115200 -B300 -U lfuse:w:0xA4:m -U hfuse:w:0x90:m
+    avrdude  -c stk500 -pm32 -P /dev/ttyUSB9 -b115200 -B300 -U flash:w:optiboot_flash_atmega32_UART0_115200_8000000L_B0.hex:i

@@ -1,8 +1,11 @@
 #define F_CPU            8000000UL
 #define BPM_STABLE_COUNT 120
 #define MSG_DISPLAY_TIME 100
-#define MAX_SQ 2
+#define MAX_SQ 1
 #define ADMUX_VAL (0 << REFS0) | (0 << ADLAR)
+
+#define TRIGGER_TOP 4000L 
+#define TRIGGER_THRESH (TRIGGER_TOP-500L) 
 
 
 #include <avr/io.h>
@@ -35,10 +38,22 @@ uint8_t get_rnd() {
 
 void timer_init() 
 {
+    /* attiny44
     // Noise timer
     TCCR0A = 1<<WGM01; 
     TCCR0B = (1 << CS02) | (0<< CS00); // divided by 64 -> 125khz 
     OCR0A = 0; // 62.5khz 
+    TCNT0=0;
+
+    // Square wave timer
+    TCCR1A = 0;
+    TCCR1B = (1<<WGM12) |(0 << CS11) | (1<< CS12); // divided by 256 -> 31250 hz
+    OCR1A = 0; 
+    TCNT1=0;*/
+
+    // Noise timer
+    TCCR0 = (1<<WGM01) | (1 << CS01) | (1<< CS00); // divided by 64 -> 125khz 
+    OCR0 = 0; // 62.5khz 
     TCNT0=0;
 
     // Square wave timer
@@ -66,6 +81,7 @@ void set_sq_freq(uint8_t i, uint16_t f) {
 int main(void)
 {
     DDRA = 0b11000111; 
+    DDRB = 0xFF;
 
     timer_init();
     adc_init();
@@ -82,6 +98,9 @@ int main(void)
 
     uint8_t rnd_index = 0;
     uint8_t rnd_last = 0;
+
+    uint16_t voice1_trigger = 0;
+
     while (1) {
 
         if ((ADCSRA & (1 << ADIF)))
@@ -93,25 +112,33 @@ int main(void)
 
             uint16_t temp = ((h<<8L)|l);
 
+            temp = temp >> 8L;
             if (adc == 5) {
-     //           set_sq_freq(0, 4000L+temp);
-       //         set_sq_freq(1, 4005L+temp);
+                if (temp >=3 && voice1_trigger == 0) voice1_trigger = TRIGGER_TOP;
             }
         }
 
 
-
-        if (TIFR0 & (1<<OCF0A)) {
-            TIFR0 |= (1<<OCF0A);
-            
-            if (get_rnd()) {
-                PINA = 1<<7;
-            }
+        if (TIFR & (1<<OCF0)) {
+            TIFR = (1<<OCF0);
+//            get_rnd();
+//            if (get_rnd()) {
+//                PINA = 1<<7;
+//            }
         }
 
 
-        if (TIFR1 & (1<<OCF1A)) {
-            TIFR1 |= (1<<OCF1A);
+        if (TIFR & (1<<OCF1A)) {
+            TIFR = (1<<OCF1A);
+
+/*            if (voice1_trigger > 0) {
+                voice1_trigger--;
+            }
+            if (voice1_trigger > TRIGGER_THRESH) {
+                PORTB |= 1;
+            } else {
+                PORTB &= 0xFE;
+            }*/
 
             uint8_t metal_pin = 0;
 

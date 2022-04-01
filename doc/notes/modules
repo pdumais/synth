@@ -16,8 +16,7 @@
 - Modules:
     - sample and hold
 
-    - Noise generator: Avalanche noise gen with a transistor and resistor
-        current design has a hum, and it also needs to clip the signal to -5,+5
+    - Noise generator
 
     - drum machine
         analog

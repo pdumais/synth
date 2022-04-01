@@ -8,7 +8,4 @@ Based on the as3320.
     the 100k and 1.8k resistors on the cv input in the datasheet are a divider
     to drop 10v down to 180mV. I need to adapt this for 5v
 
-- The range for resonance CV is 0-2V. What does that relate to?
-- No need for output buffer
-- will output audio signal stay within +-5v?
 
