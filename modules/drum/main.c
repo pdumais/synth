@@ -12,7 +12,7 @@
 
 #define TRIGGER_TOP 4000L 
 #define TRIGGER_THRESH (TRIGGER_TOP-500L) 
-#define MAX_VOICE 4
+#define MAX_VOICE 5
 
 #include "uart.h"
 #include <avr/io.h>
@@ -113,6 +113,13 @@ void process_triggers() {
         PORTA &= 0xFE;
         DDRA &= 0xFE; // Leave pin floating, so we dont interfere with button
     }
+    if (voice_trigger[4] > TRIGGER_THRESH) {
+        PORTA |= (1<<3);
+        DDRA |= (1<<3); 
+    } else {
+        PORTA &= ~(1<<3);
+        DDRA &= ~(1<<3); // Leave pin floating, so we dont interfere with button
+    }
 }
 
 int main(void)
@@ -125,7 +132,7 @@ int main(void)
     //adc_init();
 
     sq[0].f = 8000L;
-    sq[1].f = 4010L; 
+    sq[1].f = 6010L; 
 
     for (uint8_t i = 0; i < MAX_SQ; i ++) {
         set_sq_freq(i, sq[i].f);
