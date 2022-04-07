@@ -150,6 +150,7 @@ int main(void)
     uint8_t c;
     uint8_t midi_status = 0;
     uint8_t midi_d1=0;
+    uint16_t noise_pin = 0;
 
     for (uint8_t i = 0; i < MAX_VOICE; i++) voice_trigger[i] = 0;
 
@@ -177,7 +178,8 @@ int main(void)
         if (TIFR1 & (1<<OCF1A)) {
             TIFR1 = (1<<OCF1A);
 
-            if (get_rnd()) {
+            noise_pin = (noise_pin+1)&0b111;
+            if (get_rnd() && ((PINA&(1<<4)) || (noise_pin == 0))) {
                 PINA = (1<<5);
             }
 
