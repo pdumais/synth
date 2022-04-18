@@ -52,9 +52,7 @@ void timer_init()
     TCCR1B = (1<<WGM12) |(0 << CS11) | (1<< CS10); // divided by 64 -> 125khz
     OCR1A = 0; 
     TCNT1=0;
-
 }
-
 
 void adc_init() {
     ADMUX = ADMUX_VAL | 5 ; // AVcc with capacitor to ARef

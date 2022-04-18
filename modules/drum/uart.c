@@ -42,7 +42,6 @@ uint8_t uart_getc(char *dst)
 	temp = (bufout + 1) & 0b111;
 	if (temp == bufin) return 0;
 
-	//Get data from buffer and bitswap
 	*dst = brev(buf[temp]);
 
 	bufout = temp;
@@ -52,7 +51,6 @@ uint8_t uart_getc(char *dst)
 
 ISR(PCINT0_vect)
 {
-	//Only react if Pin is low (startbit)
 	if (PINA & (1<<6)) return;
 	PCMSK0 = 0;
 

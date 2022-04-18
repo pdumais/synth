@@ -17,7 +17,7 @@ void timer_init()
 {
     TCCR0A = (1<<WGM01); // CTC
     TCCR0B = (1<<CS00)|(1<<CS02);   //prescaling with 1024. Timer freq=7812.5hz
-    OCR0A = 1; // Timer = 3906hz
+    OCR0A = 3; // Timer = 1953 //3906hz 
     TCNT0=0;
 
     TCCR1A = (0<<WGM10)|(1<<WGM11)|(1<<COM1A1)|(1<<COM1A0)|(1<<COM1B1);
@@ -107,6 +107,9 @@ int main(void)
                 rate = adcs[3];
             }
             if (adcs[0] != manual) {
+                // The LFO might be active and oscillating around "manual". So we don't
+                // wanna overwrite the value. Instead, we wanna take the detla from the current value
+                // and the "manual" base, and rebase the delta on the new manual value.
                 uint16_t delta = temp - manual;
                 manual = adcs[0];
                 temp = manual+delta;
@@ -121,14 +124,11 @@ int main(void)
         if (max == 0) max = 1;
 
 
-        // This will be true 488 times per second. 
         if (TIFR0 & (1<<OCF0A)) {
             TIFR0 |= (1<<OCF0A); // Clear interupt flag
             rate_counter++;
 
-            // rate_counter increases by one 3906 times per second.
-            // so if rate == 1, then the wave increase by one 3906 times per second,
-            if (rate_counter >= rate) {
+            if ((rate_counter >= (1023L-rate)) && (rate != 0)) {
                 rate_counter = 0;
 
                 // This is a triangle wave that will oscillate between manual and manual+depth
