@@ -28,7 +28,7 @@ void Midi::useDevice(int num)
 void Midi::sendNoteOn(int channel, int note, int level, bool poly/*=false*/)
 {
     unsigned char msg[3];
-    if (!poly && this->currentNote != -1) 
+    if (!poly && this->currentNote != -1)
     {
         // Send note-off for other note if we are not poly
         msg[0] = 0x80 | (channel&0xF);
@@ -42,4 +42,15 @@ void Midi::sendNoteOn(int channel, int note, int level, bool poly/*=false*/)
     this->midiout->sendMessage(msg,3);
 
     this->currentNote = note;
+}
+
+void Midi::sendNoteOff(int channel, int note)
+{
+    unsigned char msg[3];
+    msg[0] = 0x90 | (channel&0xF);
+    msg[1] = note;
+    this->midiout->sendMessage(msg,2);
+
+//TODO: currentNote per channel!!!
+    this->currentNote = -1;
 }

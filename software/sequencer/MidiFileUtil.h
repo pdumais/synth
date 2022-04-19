@@ -1,12 +1,20 @@
 #pragma once
 
 #include "Midi.h"
+#include "midifile/MidiFile.h"
+
 
 class MidiFileUtil
 {
-public:
-    MidiFileUtil();
+private:
+    std::string fname;
+    int tpqn;
+    smf::MidiFile midifile;
 
-    std::map<long, MidiEvent*> getEventsFromFile(std::string fname);
+public:
+    MidiFileUtil(std::string fname);
+
+    std::vector<std::map<long, MidiEvent*>> getEventsFromFile();
+    int getTicksPerQuarteNotes();
 };
 

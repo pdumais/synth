@@ -21,6 +21,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     Midi.cpp \
     MidiFileUtil.cpp \
+    MidiRoll.cpp \
     RtMidi.cpp \
     Sequencer.cpp \
     main.cpp \
@@ -35,6 +36,7 @@ SOURCES += \
 HEADERS += \
     Midi.h \
     MidiFileUtil.h \
+    MidiRoll.h \
     RtMidi.h \
     Sequencer.h \
     mainwindow.h \

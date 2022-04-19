@@ -31,4 +31,5 @@ public:
     void useDevice(int num);
 
     void sendNoteOn(int channel, int note, int level, bool poly=false);
+    void sendNoteOff(int channel, int note);
 };

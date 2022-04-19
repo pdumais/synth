@@ -1,5 +1,4 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QMainWindow>
 #include <QTimer>
@@ -17,12 +16,18 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_comboBox_currentIndexChanged(int index);
+
+    void on_playButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     Sequencer *sequencer;
     QTimer *timer;
+    std::vector<std::map<long, MidiEvent*>> midiFileEvents;
 
+    void changeTrack(int trk);
     void processTimer();
     void setBPM(int bpm);
 };
-#endif // MAINWINDOW_H
