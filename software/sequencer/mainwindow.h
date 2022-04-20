@@ -21,6 +21,10 @@ private slots:
 
     void on_playButton_clicked();
 
+    void on_spinBox_valueChanged(int arg1);
+
+    void on_stopButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     Sequencer *sequencer;

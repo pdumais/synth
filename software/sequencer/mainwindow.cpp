@@ -15,7 +15,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->timer, &QTimer::timeout, this, &MainWindow::processTimer);
 
     this->sequencer = new Sequencer();
-    MidiFileUtil mf("/home/pat/projects/synth/tracks/sonic/ice.mid");
+
+    MidiFileUtil mf("C:\\Users\\pat\\Documents\\EAGLE\\projects\\synth\\ice.mid");
+    //MidiFileUtil mf("/home/pat/projects/synth/tracks/sonic/ice.mid");
 
     MidiRoll *mr = ui->midiRoll;
     this->midiFileEvents = mf.getEventsFromFile();
@@ -48,6 +50,7 @@ void MainWindow::setBPM(int bpm)
 
 void MainWindow::changeTrack(int trk)
 {
+    this->sequencer->stop();
     this->sequencer->loadEvents(midiFileEvents[trk]);
 
     MidiRoll *mr = ui->midiRoll;
@@ -77,4 +80,14 @@ void MainWindow::on_comboBox_currentIndexChanged(int index)
 void MainWindow::on_playButton_clicked()
 {
     this->sequencer->play();
+}
+
+void MainWindow::on_spinBox_valueChanged(int arg1)
+{
+    this->setBPM(arg1);
+}
+
+void MainWindow::on_stopButton_clicked()
+{
+    this->sequencer->stop();
 }

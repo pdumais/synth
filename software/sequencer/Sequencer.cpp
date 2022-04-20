@@ -22,7 +22,7 @@ void Sequencer::play()
 {
     this->running = true;
     this->position = 0;
-    this->eventsIterator = this->events.begin();
+    this->currentTick = 0;
 }
 
 void Sequencer::stop()
@@ -39,41 +39,48 @@ void Sequencer::onClockTick()
 {
     if (!this->running) return;
 
-    this->currentTick++;
-    //this->position += this->tpqn;
-
-//TODO: detect if this timesout the duration of an event and we must send noteOff
-
-    while (1)
+    // Is there an even at this tick?
+    if (this->events.count(this->currentTick))
     {
-        auto it = this->eventsIterator;
-        it++;
-        if (it == this->events.end())
-        {
-         //  TODO: this->stop();
-            break;
-        }
+        auto ev = this->events[this->currentTick];
+        while (ev) {
+            if (ev->event == 0x90)
+            {
+                this->midi.sendNoteOn(ev->channel, ev->d1, ev->d2);
+                long end = ev->duration + this->currentTick;
 
-        /*auto start = it->first;
-        if (start <= this->position)
-        {
-            auto nextEvent = it->second;
-            while (nextEvent) {
-                if (nextEvent->event == 0x90)
+                MidiEvent* mev = new MidiEvent();
+                mev->d1 = ev->d1;
+                mev->event = 0x80;
+                mev->channel = ev->channel;
+                mev->start = end;
+                mev->next = 0;
+                if (!this->events.count(end))
                 {
-                    this->midi.sendNoteOn(nextEvent->channel, nextEvent->d1, nextEvent->d2);
+                    this->events[end] = mev;
                 }
-                else if (nextEvent->event == 0x80)
+                else
                 {
-                    this->midi.sendNoteOff(nextEvent->channel, nextEvent->d1);
+                    auto mev2 = this->events[end];
+                    while (mev2) {
+                        if (!mev2->next)
+                        {
+                            mev2->next = mev;
+                            break;
+                        }
+                        mev2 = mev2->next;
+                    }
                 }
-                nextEvent = nextEvent->next;
             }
-            this->eventsIterator++;*/
-        } else {
-            break;
+            else if (ev->event == 0x80)
+            {
+                this->midi.sendNoteOff(ev->channel, ev->d1);
+            }
+            ev = ev->next;
         }
     }
+
+    this->currentTick++;
 }
 
 void Sequencer::setTicksPerQuarterNote(int tpqn)

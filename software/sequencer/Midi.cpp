@@ -40,7 +40,7 @@ void Midi::sendNoteOn(int channel, int note, int level, bool poly/*=false*/)
     msg[1] = note;
     msg[2] = level;
     this->midiout->sendMessage(msg,3);
-
+    std::cout << "Note On: " << note << std::endl;
     this->currentNote = note;
 }
 
@@ -51,6 +51,7 @@ void Midi::sendNoteOff(int channel, int note)
     msg[1] = note;
     this->midiout->sendMessage(msg,2);
 
+    std::cout << "Note Off: " << note << std::endl;
 //TODO: currentNote per channel!!!
     this->currentNote = -1;
 }

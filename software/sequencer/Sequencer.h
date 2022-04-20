@@ -8,7 +8,7 @@ class Sequencer
 {
 private:
     std::map<long, MidiEvent*> events;
-    std::map<long, MidiEvent*>::iterator eventsIterator;
+//    std::map<long, MidiEvent*>::iterator eventsIterator;
     Midi    midi;
     int tpqn;
     int position;

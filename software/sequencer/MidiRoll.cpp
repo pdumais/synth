@@ -30,12 +30,18 @@ void MidiRoll::setTicksPerQuarterNotes(int tpqn)
 void MidiRoll::setEvents(QVector<MidiRollEvent*>& events)
 {
     //TODO: delete old events
+    if (events.size() == 0) return;
+
     this->eventsList = events;
+    auto lastev = this->eventsList.last();
+
+    this->scene->setSceneRect(0,0,((float)(lastev->start+lastev->length)/(float)this->ticksPerQuarterNote)*QUARTERNOTE_WIDTH, 128*QUARTERNOTE_HEIGHT);
     this->updateEvents();
 }
 
 void MidiRoll::updateEvents()
 {
+
     this->scene->clear();
     this->scene->update();
 
@@ -90,21 +96,22 @@ void MidiRoll::createGrid()
     }
 
     this->cursorItem = this->scene->addLine(this->cursorPosition, 0, this->cursorPosition, h, QPen(Qt::red));
-
+    int w2 = this->sceneRect().width();
+    if (w2 > 10000000)
+    {
+        int a = 1;
+    }
 }
 
 void MidiRoll::resizeEvent(QResizeEvent *event)
 {
-    this->createGrid();
+    this->updateEvents();
 }
 
 void MidiRoll::setup()
 {
     this->scene = new QGraphicsScene();
-    this->createGrid();
+    this->updateEvents();
     this->setScene(this->scene);
-
-    //this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->show();
 }
