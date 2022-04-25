@@ -13,28 +13,22 @@ int MidiFileUtil::getTicksPerQuarteNotes()
 }
 
 
-std::vector<std::map<long, MidiEvent*>> MidiFileUtil::getEventsFromFile()
+std::vector<std::map<long, std::vector<MidiEvent*>>> MidiFileUtil::getEventsFromFile()
 {
-    std::vector<std::map<long, MidiEvent*>> ret;
+    std::vector<std::map<long, std::vector<MidiEvent*>>> ret;
     for (int track=0; track<midifile.size(); track++)
     {
-        std::map<long, MidiEvent*> trk;
+        std::map<long, std::vector<MidiEvent*>> trk;
         for (int event=0; event<midifile[track].size(); event++) {
             smf::MidiEvent* mev = &midifile[track][event];
 
             MidiEvent *ev = new MidiEvent();
-            ev->next = 0;
             long t = mev->tick;
             if (!trk.count(t))
             {
-                trk[t] = ev;
+                trk[t] = std::vector<MidiEvent*>();
             }
-            else
-            {
-                MidiEvent *e = trk[t];
-                while (e->next != 0) e = e->next;
-                e->next = ev;
-            }
+            trk[t].push_back(ev);
 
             ev->start = mev->tick;
             ev->duration = mev->getTickDuration();

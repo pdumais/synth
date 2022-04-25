@@ -1,16 +1,18 @@
 #include "Sequencer.h"
+#include <iostream>
 
 Sequencer::Sequencer()
 {
-    for (auto &it : this->midi.listDevices())
+    for (auto it : this->midi.listDevices())
     {
         std::cout << it << "\r\n";
     }
 
+    for (int i=0; i<16; i++) this->currentNote[i] = 0;
     this->running = false;
     this->tpqn = 192;
     this->position = 0;
-    this->midi.useDevice(0);
+    this->midi.useDevice(1);
 }
 
 Sequencer::~Sequencer()
@@ -35,48 +37,44 @@ long Sequencer::getCurrentTick()
     return this->currentTick;
 }
 
+Midi* Sequencer::getMidi()
+{
+    return &this->midi;
+}
+
 void Sequencer::onClockTick()
 {
     if (!this->running) return;
 
-    // Is there an even at this tick?
-    if (this->events.count(this->currentTick))
+    for (int i = 0; i< 16; i++)
     {
-        auto ev = this->events[this->currentTick];
-        while (ev) {
-            if (ev->event == 0x90)
-            {
-                this->midi.sendNoteOn(ev->channel, ev->d1, ev->d2);
-                long end = ev->duration + this->currentTick;
+        auto *cn = this->currentNote[i];
+        if (!cn) continue;
+        if (this->currentTick >= (cn->start+cn->duration))
+        {
+            this->midi.sendNoteOff(cn->channel, cn->d1);
+            this->currentNote[i] = 0;
+        }
+    }
 
-                MidiEvent* mev = new MidiEvent();
-                mev->d1 = ev->d1;
-                mev->event = 0x80;
-                mev->channel = ev->channel;
-                mev->start = end;
-                mev->next = 0;
-                if (!this->events.count(end))
-                {
-                    this->events[end] = mev;
-                }
-                else
-                {
-                    auto mev2 = this->events[end];
-                    while (mev2) {
-                        if (!mev2->next)
-                        {
-                            mev2->next = mev;
-                            break;
-                        }
-                        mev2 = mev2->next;
-                    }
-                }
-            }
-            else if (ev->event == 0x80)
+
+    // Is there an even at this tick?
+    auto evlist = this->events.get(this->currentTick);
+    for (auto ev : evlist) {
+        if (ev->event == 0x90)
+        {
+            auto *cn = this->currentNote[ev->channel];
+            if (cn)
             {
-                this->midi.sendNoteOff(ev->channel, ev->d1);
+                this->midi.sendNoteOff(cn->channel, cn->d1);
             }
-            ev = ev->next;
+            this->midi.sendNoteOn(ev->channel, ev->d1, ev->d2);
+            this->currentNote[ev->channel] = ev;
+        }
+        else if (ev->event == 0x80)
+        {
+            this->midi.sendNoteOff(ev->channel, ev->d1);
+            this->currentNote[ev->channel] = 0;
         }
     }
 
@@ -93,27 +91,40 @@ long Sequencer::getTicksPerQuarterNote()
     return this->tpqn;
 }
 
-void Sequencer::setEvent(MidiEvent ev, int pos/*=-1*/)
+void Sequencer::removeEvent(long tick, int channel, int note, int type/*=0x90*/)
 {
-}
-
-void Sequencer::removeEvent(int pos)
-{
-}
-
-
-void Sequencer::loadEvents(std::map<long, MidiEvent*> events)
-{
-    this->events = events;
-    for (auto &it : events)
-    {
-        std::cout << it.first << ": " << it.second->event << std::endl;
+    auto evlist = this->events.get(tick);
+    for (auto ev : evlist) {
+        if (ev->event == type && ev->channel == channel && ev->d1 == note)
+        {
+            this->events.remove(tick, ev);
+        }
     }
 }
 
-std::map<long, MidiEvent*> Sequencer::dumpEvents()
+void Sequencer::addEvent(long tick, MidiEvent* ev)
 {
-    std::map<long, MidiEvent*> ret;
-    return ret;
+    this->events.insert(tick, ev);
+}
+
+
+void Sequencer::loadEvents(std::map<long, std::vector<MidiEvent*>> events)
+{
+    this->events.clear();
+    for (auto& it : events)
+    {
+        long tick = it.first;
+
+        for (auto ev : it.second)
+        {
+            this->addEvent(tick, ev);
+        }
+    }
+
+}
+
+std::map<long, std::vector<MidiEvent*>> Sequencer::dumpEvents()
+{
+    return this->events.getRaw();
 }
 

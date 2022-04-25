@@ -2,18 +2,19 @@
 #include <map>
 
 #include "Midi.h"
+#include "EventList.h"
 
 
 class Sequencer
 {
 private:
-    std::map<long, MidiEvent*> events;
-//    std::map<long, MidiEvent*>::iterator eventsIterator;
+    EventList<MidiEvent*> events;
     Midi    midi;
     int tpqn;
     int position;
     bool running;
     long currentTick;
+    MidiEvent* currentNote[16];
 
 public:
     Sequencer();
@@ -24,11 +25,12 @@ public:
     void play();
     void stop();
 
-    void setEvent(MidiEvent ev, int pos=-1);
-    void removeEvent(int pos);
+    void removeEvent(long tick, int channel, int note, int type=0x90);
     long getCurrentTick();
-    void loadEvents(std::map<long, MidiEvent*> events);
-    std::map<long, MidiEvent*> dumpEvents();
+    void loadEvents(std::map<long, std::vector<MidiEvent*>> events);
+    void addEvent(long tick, MidiEvent* event);
+    Midi* getMidi();
+    std::map<long, std::vector<MidiEvent*>> dumpEvents();
 
     void onClockTick();
 };

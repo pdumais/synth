@@ -14,7 +14,7 @@ private:
 public:
     MidiFileUtil(std::string fname);
 
-    std::vector<std::map<long, MidiEvent*>> getEventsFromFile();
+    std::vector<std::map<long, std::vector<MidiEvent*>>> getEventsFromFile();
     int getTicksPerQuarteNotes();
 };
 

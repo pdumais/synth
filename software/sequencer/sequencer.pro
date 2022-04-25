@@ -26,11 +26,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    EventList.cpp \
     Midi.cpp \
     MidiFileUtil.cpp \
     MidiRoll.cpp \
     RtMidi.cpp \
     Sequencer.cpp \
+    TrackWidget.cpp \
     main.cpp \
     mainwindow.cpp \
     midifile/Binasc.cpp \
@@ -41,11 +43,13 @@ SOURCES += \
     rtmidi_c.cpp
 
 HEADERS += \
+    EventList.h \
     Midi.h \
     MidiFileUtil.h \
     MidiRoll.h \
     RtMidi.h \
     Sequencer.h \
+    TrackWidget.h \
     mainwindow.h \
     midifile/Binasc.h \
     midifile/MidiEvent.h \
@@ -55,6 +59,7 @@ HEADERS += \
     rtmidi_c.h
 
 FORMS += \
+    TrackWidget.ui \
     mainwindow.ui
 
 # Default rules for deployment.
