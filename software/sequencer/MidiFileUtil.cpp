@@ -12,6 +12,32 @@ int MidiFileUtil::getTicksPerQuarteNotes()
     return midifile.getTicksPerQuarterNote();
 }
 
+void MidiFileUtil::saveToFile(std::string fname, std::vector<std::map<long, std::vector<MidiEvent*>>> tracks, int tpq)
+{
+    smf::MidiFile midifile;
+
+    midifile.setTPQ(tpq);
+    midifile.addTracks(tracks.size()-1);
+    for (int i = 0; i < tracks.size(); i++)
+    {
+        for (auto it : tracks[i])
+        {
+            for (auto ev : it.second)
+            {
+                int starttick = ev->start;
+                int channel = ev->channel;
+                int key = ev->d1;
+                int vel = ev->d2;
+                int endtick = starttick+ev->duration;
+                midifile.addNoteOn (i, starttick, channel, key, vel);
+                midifile.addNoteOff(i, endtick, channel, key);
+            }
+        }
+    }
+    midifile.sortTracks();
+    midifile.removeEmpties();
+    midifile.write(fname);
+}
 
 std::vector<std::map<long, std::vector<MidiEvent*>>> MidiFileUtil::getEventsFromFile()
 {
@@ -21,6 +47,9 @@ std::vector<std::map<long, std::vector<MidiEvent*>>> MidiFileUtil::getEventsFrom
         std::map<long, std::vector<MidiEvent*>> trk;
         for (int event=0; event<midifile[track].size(); event++) {
             smf::MidiEvent* mev = &midifile[track][event];
+
+            if (!mev->isNoteOn()) continue;
+            if (mev->getVelocity() == 0) continue;
 
             MidiEvent *ev = new MidiEvent();
             long t = mev->tick;
@@ -40,10 +69,6 @@ std::vector<std::map<long, std::vector<MidiEvent*>>> MidiFileUtil::getEventsFrom
                 ev->d1 = mev->getKeyNumber();
                 ev->d2 = mev->getVelocity();
              }
-            else if (mev->isNoteOff())
-            {
-                ev->d1 = mev->getKeyNumber();
-            }
         }
         ret.push_back(trk);
      }

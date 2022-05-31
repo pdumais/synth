@@ -46,6 +46,12 @@ private slots:
 
     void on_track_selected(TrackWidget* track);
 
+    void on_midiroll_BlocksMoved(std::vector<MidiRollEvent*> originals, std::vector<MidiRollEvent*> changed);
+
+    void on_actionOpen_triggered();
+
+    void on_actionSave_As_triggered();
+
 private:
     Ui::MainWindow *ui;
     Sequencer *sequencer;
@@ -53,13 +59,16 @@ private:
     QLabel *noteStatusLabel;
     QLabel *modeLabel;
     QVector<TrackWidget*> trackWidgets;
-    std::vector<std::map<long, std::vector<MidiEvent*>>> midiFileEvents;
     float zoomx;
     float zoomy;
     int defaultChannel;
 
+    void loadFile(std::string fname);
     void changeTrack(int trk);
     void processTimer();
     void setBPM(int bpm);
+
+    void showDevicesDialog();
+    void saveMidiFile(std::string fname);
 
 };

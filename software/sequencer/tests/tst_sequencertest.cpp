@@ -41,11 +41,15 @@ void SequencerTest::test_load_file()
 
     auto events = mf->getEventsFromFile();
 
-    // Choose track 0
-    seq->loadEvents(events[0]);
-
+    int t = 0;
+    for (auto trk : events)
+    {
+        seq->loadEvents(t, trk);
+        t++;
+    }
+    seq->setTrack(0);
     seq->addEvent(1, new MidiEvent(1, 1000, 0, 0x90, 100, 127));
-
+    
     seq->setTicksPerQuarterNote(127);
 
 }
@@ -53,6 +57,7 @@ void SequencerTest::test_load_file()
 void SequencerTest::test_case1()
 {
     Sequencer* seq = new Sequencer();
+    seq->setTrack(0);
 
     //Playing while empty does not crash
     seq->play();

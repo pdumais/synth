@@ -36,6 +36,8 @@ public:
     QAction *actionSelect;
     QAction *actionStop;
     QAction *actionDelete;
+    QAction *actionOpen;
+    QAction *actionSave_As;
     QWidget *centralwidget;
     QGridLayout *gridLayout_4;
     QFrame *frame_3;
@@ -56,6 +58,7 @@ public:
     QMenu *menutest;
     QMenu *menuEdit;
     QMenu *menuMode;
+    QMenu *menuFile;
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -73,6 +76,10 @@ public:
         actionStop->setObjectName(QString::fromUtf8("actionStop"));
         actionDelete = new QAction(MainWindow);
         actionDelete->setObjectName(QString::fromUtf8("actionDelete"));
+        actionOpen = new QAction(MainWindow);
+        actionOpen->setObjectName(QString::fromUtf8("actionOpen"));
+        actionSave_As = new QAction(MainWindow);
+        actionSave_As->setObjectName(QString::fromUtf8("actionSave_As"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         gridLayout_4 = new QGridLayout(centralwidget);
@@ -198,11 +205,14 @@ public:
         menuEdit->setObjectName(QString::fromUtf8("menuEdit"));
         menuMode = new QMenu(menuEdit);
         menuMode->setObjectName(QString::fromUtf8("menuMode"));
+        menuFile = new QMenu(menubar);
+        menuFile->setObjectName(QString::fromUtf8("menuFile"));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
         MainWindow->setStatusBar(statusbar);
 
+        menubar->addAction(menuFile->menuAction());
         menubar->addAction(menutest->menuAction());
         menubar->addAction(menuEdit->menuAction());
         menutest->addAction(actionEdit_2);
@@ -211,6 +221,8 @@ public:
         menuEdit->addAction(actionDelete);
         menuMode->addAction(actionEdit_3);
         menuMode->addAction(actionSelect);
+        menuFile->addAction(actionOpen);
+        menuFile->addAction(actionSave_As);
 
         retranslateUi(MainWindow);
 
@@ -243,6 +255,14 @@ public:
 #ifndef QT_NO_SHORTCUT
         actionDelete->setShortcut(QApplication::translate("MainWindow", "Del", nullptr));
 #endif // QT_NO_SHORTCUT
+        actionOpen->setText(QApplication::translate("MainWindow", "Open", nullptr));
+#ifndef QT_NO_SHORTCUT
+        actionOpen->setShortcut(QApplication::translate("MainWindow", "Ctrl+O", nullptr));
+#endif // QT_NO_SHORTCUT
+        actionSave_As->setText(QApplication::translate("MainWindow", "Save As ...", nullptr));
+#ifndef QT_NO_SHORTCUT
+        actionSave_As->setShortcut(QApplication::translate("MainWindow", "Ctrl+S", nullptr));
+#endif // QT_NO_SHORTCUT
         comboBox->setItemText(0, QApplication::translate("MainWindow", "0", nullptr));
         comboBox->setItemText(1, QApplication::translate("MainWindow", "1", nullptr));
         comboBox->setItemText(2, QApplication::translate("MainWindow", "2", nullptr));
@@ -264,6 +284,7 @@ public:
         menutest->setTitle(QApplication::translate("MainWindow", "Actions", nullptr));
         menuEdit->setTitle(QApplication::translate("MainWindow", "Edit", nullptr));
         menuMode->setTitle(QApplication::translate("MainWindow", "Mode", nullptr));
+        menuFile->setTitle(QApplication::translate("MainWindow", "File", nullptr));
     } // retranslateUi
 
 };

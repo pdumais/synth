@@ -30,6 +30,7 @@ SOURCES += \
     Midi.cpp \
     MidiFileUtil.cpp \
     MidiRoll.cpp \
+    MidiRollFrameBase.cpp \
     RtMidi.cpp \
     Sequencer.cpp \
     TrackWidget.cpp \
@@ -47,6 +48,7 @@ HEADERS += \
     Midi.h \
     MidiFileUtil.h \
     MidiRoll.h \
+    MidiRollFrameBase.h \
     RtMidi.h \
     Sequencer.h \
     TrackWidget.h \

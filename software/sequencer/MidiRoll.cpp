@@ -10,27 +10,17 @@
 #include <QMouseEvent>
 #include <QGuiApplication>
 
-#define QUARTERNOTE_WIDTH 40
-#define QUARTERNOTE_HEIGHT 15
 
 QColor cols[] = {Qt::red, Qt::blue, Qt::green, Qt::yellow};
 
 
-//TODO: move horizontal (With onChangeEvent)
-//TODO: move vertical
-//TODO: resize
-//TODO: add (with onNewEvent)
-//TODO: delete (with onDeleteEvent)
-
-MidiRoll::MidiRoll(QWidget *parent) : QGraphicsView(parent)
+MidiRoll::MidiRoll(QWidget *parent) : MidiRollFrameBase(parent)
 {
     this->ticksPerQuarterNote = 192;
     this->track = 0;
     this->cursorPosition = 0;
-    this->adding = false;
-    this->mode = MouseMode::Edit;
     this->setInteractive(true);
-
+    this->gridLines = 0;
     this->setup();
 
 }
@@ -38,24 +28,55 @@ MidiRoll::MidiRoll(QWidget *parent) : QGraphicsView(parent)
 void MidiRoll::setup()
 {
     this->scene = new QGraphicsScene();
-    this->updateEvents();
     this->setScene(this->scene);
-    this->initNewBlock();
+    MidiRollFrameBase::setup();
+    this->updateEvents();
     this->show();
-    this->rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
-    this->rubberBand->hide();
     this->setRubberBandSelectionMode(Qt::IntersectsItemBoundingRect);
+
+
 }
 
-void MidiRoll::initNewBlock()
+QRect MidiRoll::getSection()
 {
-    this->newBlock = new QGraphicsRectItem(0,0,0,0);
-    this->newBlock->setBrush(Qt::red);
-    this->newBlock->setOpacity(0.5);
-    this->newBlock->setFlag(QGraphicsItem::ItemIsSelectable, true);
-    this->scene->addItem(this->newBlock);
-    this->newBlock->setVisible(false);
+    QRect ret;
+    float tickPerPixel = float(this->ticksPerQuarterNote)/float(QUARTERNOTE_WIDTH);
+
+    float x = float(this->sectionStartItem->pos().x()-QUARTERNOTE_WIDTH)*tickPerPixel;
+    float x2 = float(this->sectionEndItem->pos().x()-QUARTERNOTE_WIDTH)*tickPerPixel;
+    ret.setX(int(x));
+    ret.setWidth(int(x2-x));
+
+    return ret;
 }
+
+void MidiRoll::updateEvent(MidiRollEvent* original, MidiRollEvent* updated)
+{
+    for (auto gitem : this->scene->items())
+    {
+        auto item = dynamic_cast<QGraphicsRectItem*>(gitem);
+        if (!item) continue;
+
+        MidiRollEvent* mre = item->data(2).value<MidiRollEvent*>();
+        if (mre->note == original->note && mre->start == original->start && mre->channel == original->channel)
+        {
+            mre->note = updated->note;
+            mre->start = updated->start;
+            mre->length = updated->length;
+            mre->channel = updated->channel;
+            int x = ((float)mre->start/(float)this->ticksPerQuarterNote)*QUARTERNOTE_WIDTH;
+            int y = ((127-mre->note)*QUARTERNOTE_HEIGHT);
+            int w = ((float)mre->length/(float)this->ticksPerQuarterNote)*QUARTERNOTE_WIDTH;
+            int h = (QUARTERNOTE_HEIGHT-1);
+            x += QUARTERNOTE_WIDTH; // Skip 1st square because it's the number
+
+            item->setRect(x, y, w, h);
+            this->updateGridWidth();
+            return;
+        }
+    }
+}
+
 
 
 void MidiRoll::setTicksPerQuarterNotes(int tpqn)
@@ -73,11 +94,13 @@ void MidiRoll::setEvents(QVector<MidiRollEvent*>& events)
     }
 
     this->eventsList = events;
-    if (events.size() != 0)
-    {
-        auto lastev = this->eventsList.last();
-        this->scene->setSceneRect(0,0,((float)(lastev->start+lastev->length)/(float)this->ticksPerQuarterNote)*QUARTERNOTE_WIDTH, 128*QUARTERNOTE_HEIGHT);
-    }
+
+    float last = float(this->eventsList.last()->start+this->eventsList.last()->length);
+    last = last / float(this->ticksPerQuarterNote);
+    last = last * float(QUARTERNOTE_WIDTH);
+    this->sectionStart = 0;
+    this->sectionEnd = long(last);
+    this->updateSection(this->sectionStart, this->sectionEnd);
     this->updateEvents();
 }
 
@@ -91,35 +114,57 @@ void MidiRoll::createEventBlock(MidiRollEvent* ev)
 
     x += QUARTERNOTE_WIDTH; // Skip 1st square because it's the number
     QColor col = QColor(cols[ev->channel]);
-
-    auto item = this->scene->addRect(x, y, w, h, QPen(Qt::black), col);
+    QColor colborder = col.lighter(130);
+    auto item = this->scene->addRect(x, y, w, h, QPen(colborder), col);
     item->setFlag(QGraphicsItem::ItemIsSelectable, true);
     item->setData(1, col);
     item->setData(2, QVariant::fromValue(ev));
-
+    item->setZValue(2);
 }
 
 void MidiRoll::addEvent(MidiRollEvent* ev)
 {
     this->eventsList.append(ev);
     this->createEventBlock(ev);
+
+    this->updateGridWidth();
 }
 
+void MidiRoll::updateGridWidth()
+{
+    long last = 0;
+    for (auto &ev : this->eventsList)
+    {
+        long evend = ev->start+ev->length;
+        if (evend > last) last = evend;
+    }
+
+    this->scene->setSceneRect(0,0,(QUARTERNOTE_WIDTH*20)+((float)(last)/(float)this->ticksPerQuarterNote)*QUARTERNOTE_WIDTH, 128*QUARTERNOTE_HEIGHT);
+    this->createGrid();
+}
 
 
 void MidiRoll::updateEvents()
 {
-
+    //TODO: dont clear the whole scene. just clear events
     this->scene->clear();
+    this->gridLines = 0;
     this->initNewBlock();
-    this->scene->update();
 
+    long last = 0;
     for (auto &ev : this->eventsList)
     {
+        long evend = ev->start+ev->length;
+        if (evend > last) last = evend;
         this->createEventBlock(ev);
     }
+    this->scene->setSceneRect(0,0,(QUARTERNOTE_WIDTH*20)+((float)(last)/(float)this->ticksPerQuarterNote)*QUARTERNOTE_WIDTH, 128*QUARTERNOTE_HEIGHT);
 
     this->createGrid();
+    this->createSection();
+    int h = this->sceneRect().height();
+    this->cursorItem = this->scene->addLine(this->cursorPosition, 0, this->cursorPosition, h, QPen(Qt::red));
+    this->scene->update();
 }
 
 void MidiRoll::setTrack(int track)
@@ -142,159 +187,56 @@ void MidiRoll::createGrid()
 
     int tickw = QUARTERNOTE_WIDTH;
     int tickh = QUARTERNOTE_HEIGHT;
-    int w = this->sceneRect().width();
+    int w = this->sceneRect().width()+tickw;
     int h = this->sceneRect().height();
+    QList<QGraphicsItem*> list;
 
-
-    // Each square is a quarternote
-    for (int i=tickw; i<w; i+=tickw)
+    if (this->gridLines)
     {
-        this->scene->addLine(i,0,i,h-1);
+        for (auto c : this->gridLines->childItems()) delete c;
+        delete this->gridLines;
+        this->gridLines = 0;
+    }
+    // Each square is a quarternote
+    for (int i=tickw; i<(w); i+=tickw)
+    {
+        list.append(this->scene->addLine(i,0,i,h-1));
     }
 
     for (int i=tickh; (i<h && i<(128*tickh)); i+=tickh)
     {
-        this->scene->addLine(0,i,w,i);
+        list.append(this->scene->addLine(0,i,w,i));
     }
 
     for (int i=0; i<=127; i++)
     {
         QString num = QString::number(127-i).rightJustified(3, '0');
-        this->scene->addText(num)->setPos(1, (i*QUARTERNOTE_HEIGHT)-5);
+        auto t = this->scene->addText(num);
+        t->setPos(1, (i*QUARTERNOTE_HEIGHT)-5);
+        list.append(t);
     }
 
-    this->cursorItem = this->scene->addLine(this->cursorPosition, 0, this->cursorPosition, h, QPen(Qt::red));
-    int w2 = this->sceneRect().width();
-    if (w2 > 10000000)
-    {
-        int a = 1;
-    }
+    this->gridLines = this->scene->createItemGroup(list);
+}
+
+void MidiRoll::createSection()
+{
+    int h = this->sceneRect().height();
+    this->sectionStartItem = this->scene->addLine(0, 0, 0, h, QPen(Qt::blue,3));
+    this->sectionEndItem = this->scene->addLine(0, 0, 0, h, QPen(Qt::blue, 3));
+    this->updateSection(this->sectionStart, this->sectionEnd);
+}
+
+void MidiRoll::updateSection(int start, int end)
+{
+    this->sectionStartItem->setX(start+QUARTERNOTE_WIDTH);
+    this->sectionEndItem->setX(end+QUARTERNOTE_WIDTH);
 }
 
 void MidiRoll::resizeEvent(QResizeEvent *event)
 {
     this->updateEvents();
 }
-
-void MidiRoll::updateNewBlockRect(QPointF spos)
-{
-    int y = spos.y() - ((int)spos.y() % QUARTERNOTE_HEIGHT);
-    int x = spos.x();
-    if ( x < QUARTERNOTE_WIDTH) return; // Ignore movements on first row
-    if (y >= (QUARTERNOTE_HEIGHT*128)) return;
-
-    this->newBlock->setRect(x, y, QUARTERNOTE_WIDTH, QUARTERNOTE_HEIGHT);
-}
-
-void MidiRoll::mouseMoveEvent(QMouseEvent *event)
-{
-    if (this->mode == MouseMode::Select)
-    {
-        auto origin = this->rubberBand->pos();
-        this->rubberBand->setGeometry(QRect(origin, event->pos()));
-        return;
-    }
-
-    auto spos = this->mapToScene(event->pos());
-    if (this->adding) {
-        //TODO: Snap to grid
-        this->updateNewBlockRect(spos);
-    }
-
-    this->onRowHover(128-(spos.y()/QUARTERNOTE_HEIGHT));
-
-
-}
-
-void MidiRoll::mousePressEvent(QMouseEvent *event)
-{
-    auto spos = this->mapToScene(event->pos());
-    if ( spos.x() < QUARTERNOTE_WIDTH) return; // Ignore movements on first row
-
-    auto item = this->itemAt(event->pos());
-
-    if (this->mode == MouseMode::Edit)
-    {
-        if (!item)
-        {
-            this->adding = true;
-            this->updateNewBlockRect(spos);
-            this->newBlock->setVisible(true);
-        }
-    }
-    else if (this->mode == MouseMode::Select)
-    {
-        this->rubberBand->setGeometry(QRect(event->pos(), QSize(10,10)));
-        this->rubberBand->show();
-    }
-
-}
-
-void MidiRoll::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (this->mode == MouseMode::Select)
-    {
-
-        for (auto i : this->scene->items())
-        {
-            i->setSelected(false);
-        }
-        QRect r = this->rubberBand->geometry();
-
-        for (auto i : this->scene->items(this->mapToScene(r), Qt::ItemSelectionMode::IntersectsItemBoundingRect))
-        {
-            i->setSelected(true);
-        }
-
-        this->updateSelection();
-        this->rubberBand->hide();
-        return;
-    }
-
-    if (!this->adding) return;
-
-    this->adding = false;
-
-    float ticks = this->newBlock->rect().x() - QUARTERNOTE_WIDTH; // Substract first column
-    ticks = (ticks / (float)QUARTERNOTE_WIDTH)*this->ticksPerQuarterNote;
-
-    this->onNewBlock(ticks, 127-(this->newBlock->rect().y()/QUARTERNOTE_HEIGHT), this->ticksPerQuarterNote);
-    this->newBlock->setVisible(false);
-
-}
-
-void MidiRoll::updateSelection()
-{
-    for (auto item : this->scene->items())
-    {
-        QGraphicsRectItem* r = dynamic_cast<QGraphicsRectItem*>(item);
-        if (!r) continue;
-
-        if (r->isSelected())
-        {
-            r->setBrush(Qt::cyan);
-        }
-        else
-        {
-            r->setBrush(r->data(1).value<QColor>());
-        }
-    }
-}
-
-void MidiRoll::setMouseMode(MouseMode mode)
-{
-    this->mode = mode;
-
-    if (mode == MouseMode::Edit)
-    {
-        this->setDragMode(QGraphicsView::NoDrag);
-    }
-    else if (mode == MouseMode::Select)
-    {
-        this->setDragMode(QGraphicsView::RubberBandDrag);
-    }
-}
-
 
 void MidiRoll::deleteSelection()
 {
@@ -308,4 +250,19 @@ void MidiRoll::deleteSelection()
         delete ev;
         delete i;
     }
+}
+
+void MidiRoll::handleNewBlockCreated(long ticks, int note)
+{
+    this->onNewBlock(ticks, note , this->ticksPerQuarterNote);
+}
+
+void MidiRoll::handleBlocksMoved(std::vector<MidiRollEvent*> originals, std::vector<MidiRollEvent*> changed)
+{
+    this->onBlocksMoved(originals, changed);
+}
+
+void MidiRoll::handleHover(int note)
+{
+    this->onRowHover(note);
 }

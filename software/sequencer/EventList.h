@@ -36,11 +36,12 @@ public:
 
     void clear()
     {
-        for (auto slot : this->events)
+        for (auto& slot : this->events)
         {
             slot.second.clear();
         }
         this->events.clear();
+        int a = 1;
     }
 
 

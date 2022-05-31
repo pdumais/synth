@@ -8,10 +8,10 @@
 class Sequencer
 {
 private:
-    EventList<MidiEvent*> events;
+    std::vector<EventList<MidiEvent*>> tracks;
+    EventList<MidiEvent*> *currentTrack;
     Midi    midi;
     int tpqn;
-    int position;
     bool running;
     long currentTick;
     MidiEvent* currentNote[16];
@@ -25,12 +25,16 @@ public:
     void play();
     void stop();
 
+    void reset();
+    void setPosition(long tick);
     void removeEvent(long tick, int channel, int note, int type=0x90);
     long getCurrentTick();
-    void loadEvents(std::map<long, std::vector<MidiEvent*>> events);
+    void loadEvents(int track, std::map<long, std::vector<MidiEvent*>> events);
+    void setTrack(int trk);
     void addEvent(long tick, MidiEvent* event);
+    void updateEvent(MidiEvent* original, MidiEvent* changed);
     Midi* getMidi();
-    std::map<long, std::vector<MidiEvent*>> dumpEvents();
+    std::map<long, std::vector<MidiEvent*>> dumpEvents(int track = -1);
 
     void onClockTick();
 };

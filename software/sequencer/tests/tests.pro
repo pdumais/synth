@@ -14,6 +14,7 @@ SOURCES +=  tst_sequencertest.cpp \
     ../Midi.cpp \
     ../MidiFileUtil.cpp \
     ../MidiRoll.cpp \
+    ../MidiRollFrameBase.cpp \
     ../Sequencer.cpp \
     ../midifile/Binasc.cpp \
     ../midifile/MidiEvent.cpp \
@@ -26,6 +27,7 @@ HEADERS += \
     ../Midi.h \
     ../MidiFileUtil.h \
     ../MidiRoll.h \
+    ../MidiRollFrameBase.h \
     ../Sequencer.h \
     ../midifile/Binasc.h \
     ../midifile/MidiEvent.h \

@@ -1,4 +1,4 @@
-SERIALPORT=/dev/ttyUSB9
+SERIALPORT=/dev/ttyUSB0
 DEVICE=m1284p
 SOURCES=main.c timer.c
 OBJECTS=$(SOURCES:.c=.o)

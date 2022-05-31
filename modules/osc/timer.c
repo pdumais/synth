@@ -38,6 +38,7 @@ void timer_init() {
 
 void set_pwm_freq(uint16_t freq1, uint16_t duty1, uint16_t offset, uint16_t duty2)
 {
+    duty1 = 512;
     duty1 = duty1 >> 2L;
 
     uint16_t t1 = counter_table[freq1];

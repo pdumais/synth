@@ -2,80 +2,60 @@
 #include <QVector>
 
 #include <QWidget>
-#include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsLineItem>
 #include <QGraphicsRectItem>
-#include <QRubberBand>
+#include "MidiRollFrameBase.h"
 
-class MidiRollEvent
-{
-public:
-    MidiRollEvent(int start, int length, int channel, int note)
-    {
-        this->length = length;
-        this->start = start;
-        this->channel = channel;
-        this->note = note;
-    }
 
-    int length;
-    int start;
-    int channel;
-    int note;
-};
-
-Q_DECLARE_METATYPE(MidiRollEvent*)
-
-class MidiRoll : public QGraphicsView
+class MidiRoll : public MidiRollFrameBase
 {
     Q_OBJECT
 public:
     explicit MidiRoll(QWidget *parent = nullptr);
 
-    enum MouseMode{
-        Edit,
-        Select
-    };
-
     void setTicksPerQuarterNotes(int tpqn);
     void setEvents(QVector<MidiRollEvent*>& eventsList);
     void addEvent(MidiRollEvent* event);
+    void updateEvent(MidiRollEvent* original, MidiRollEvent* updated);
     void setTrack(int track);
     void setCursorPosition(int tick);
-    void setMouseMode(MouseMode mode);
     void deleteSelection();
+    QRect getSection();
 
 signals:
     void onRowHover(int row);
     void onNewBlock(int tick, int row, int lenght);
     void onBlockRemoved(MidiRollEvent* ev);
+    void onBlocksMoved(std::vector<MidiRollEvent*> originals, std::vector<MidiRollEvent*> changed);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
 
+    void handleNewBlockCreated(long ticks, int note) override;
+    void handleBlocksMoved(std::vector<MidiRollEvent*>, std::vector<MidiRollEvent*>) override;
+    void handleHover(int note) override;
 
 private:
+    // Graphics Items
     QGraphicsScene *scene;
     QGraphicsLineItem* cursorItem;
     QVector<MidiRollEvent*> eventsList;
-    QGraphicsRectItem* newBlock;
-    int ticksPerQuarterNote;
+    QGraphicsItemGroup* gridLines;
+
+    // Settings
     int track;
     int cursorPosition;
-    bool adding;
-    QRubberBand* rubberBand;
-    MouseMode mode;
 
     void setup();
+    void updateGridWidth();
     void createGrid();
+    void createSection();
+    void updateSection(int start, int end);
     void updateEvents();
     void createEventBlock(MidiRollEvent*);
     void updateNewBlockRect(QPointF pos);
     void updateSelection();
-    void initNewBlock();
+
 };
 

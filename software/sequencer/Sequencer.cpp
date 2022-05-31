@@ -9,10 +9,10 @@ Sequencer::Sequencer()
     }
 
     for (int i=0; i<16; i++) this->currentNote[i] = 0;
+    for (int i=0; i<16; i++) this->tracks.push_back(EventList<MidiEvent*>());
     this->running = false;
     this->tpqn = 192;
-    this->position = 0;
-    this->midi.useDevice(1);
+    this->midi.useDevice(0);
 }
 
 Sequencer::~Sequencer()
@@ -23,13 +23,17 @@ Sequencer::~Sequencer()
 void Sequencer::play()
 {
     this->running = true;
-    this->position = 0;
     this->currentTick = 0;
 }
 
 void Sequencer::stop()
 {
     this->running = false;
+}
+
+void Sequencer::setPosition(long tick)
+{
+    this->currentTick = tick;
 }
 
 long Sequencer::getCurrentTick()
@@ -40,6 +44,13 @@ long Sequencer::getCurrentTick()
 Midi* Sequencer::getMidi()
 {
     return &this->midi;
+}
+
+void Sequencer::setTrack(int trk)
+{
+    if (trk >= this->tracks.size()) return;
+    this->stop();
+    this->currentTrack = &this->tracks[trk];
 }
 
 void Sequencer::onClockTick()
@@ -57,9 +68,8 @@ void Sequencer::onClockTick()
         }
     }
 
-
-    // Is there an even at this tick?
-    auto evlist = this->events.get(this->currentTick);
+    // Is there an event at this tick?
+    auto evlist = this->currentTrack->get(this->currentTick);
     for (auto ev : evlist) {
         if (ev->event == 0x90)
         {
@@ -93,24 +103,60 @@ long Sequencer::getTicksPerQuarterNote()
 
 void Sequencer::removeEvent(long tick, int channel, int note, int type/*=0x90*/)
 {
-    auto evlist = this->events.get(tick);
+    auto evlist = this->currentTrack->get(tick);
     for (auto ev : evlist) {
         if (ev->event == type && ev->channel == channel && ev->d1 == note)
         {
-            this->events.remove(tick, ev);
+            this->currentTrack->remove(tick, ev);
         }
     }
 }
 
 void Sequencer::addEvent(long tick, MidiEvent* ev)
 {
-    this->events.insert(tick, ev);
+    if ((ev->event & 0xF0) != 0x90) return;
+    this->currentTrack->insert(tick, ev);
 }
 
 
-void Sequencer::loadEvents(std::map<long, std::vector<MidiEvent*>> events)
+void Sequencer::updateEvent(MidiEvent* original, MidiEvent* changed)
 {
-    this->events.clear();
+    for (auto ev : this->currentTrack->get(original->start))
+    {
+        if (ev->start == original->start && ev->channel == original->channel && ev->d1 == original->d1)
+        {
+            this->currentTrack->remove(original->start,ev);
+            this->currentTrack->insert(changed->start, ev);
+            ev->d1 = changed->d1;
+            ev->channel = changed->channel;
+            ev->start = changed->start;
+            ev->duration = changed->duration;
+            return;
+        }
+    }
+}
+
+void Sequencer::reset()
+{
+    for (auto trk : this->tracks)
+    {
+        for (auto slot : trk.getRaw())
+        {
+            for (auto ev : slot.second)
+            {
+                delete ev;
+            }
+        }
+        trk.clear();
+    }
+}
+
+void Sequencer::loadEvents(int trk, std::map<long, std::vector<MidiEvent*>> events)
+{
+    if (trk >= this->tracks.size()) return;
+
+    this->setTrack(trk);
+    this->currentTrack->clear();
     for (auto& it : events)
     {
         long tick = it.first;
@@ -123,8 +169,9 @@ void Sequencer::loadEvents(std::map<long, std::vector<MidiEvent*>> events)
 
 }
 
-std::map<long, std::vector<MidiEvent*>> Sequencer::dumpEvents()
+std::map<long, std::vector<MidiEvent*>> Sequencer::dumpEvents(int track /*=-1*/)
 {
-    return this->events.getRaw();
+    if (track == -1) return this->currentTrack->getRaw();
+    return this->tracks[track].getRaw();
 }
 
